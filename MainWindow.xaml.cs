@@ -1,25 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using FamilySupermarketPOS.Models;
 using FamilySupermarketPOS.Services;
+using FamilySupermarketPOS.Views;
 using Wpf.Ui.Controls;
 
 namespace FamilySupermarketPOS
 {
-    public class CartItem
-    {
-        public string Code { get; set; } = "";
-        public string Description { get; set; } = "";
-        public double Qty { get; set; }
-        public double PriceExcl { get; set; }
-        public double TotalIncl { get; set; }
-
-        public string PriceExclDisplay => $"R {PriceExcl:N2}";
-        public string TotalInclDisplay => $"R {TotalIncl:N2}";
-    }
-
     public partial class MainWindow : FluentWindow
     {
         private const double VatRate = 0.15; // 15% South African VAT
@@ -38,8 +28,8 @@ namespace FamilySupermarketPOS
                 if (!dbConnected)
                 {
                     System.Windows.MessageBox.Show(
-                        "Note: Could not connect to local MySQL database.\nFalling back to demo item codes (1001, 1002, 1003).",
-                        "Database Notice");
+                        "Notice: Could not connect to local MySQL database.\nOffline mode active: Using demo stock catalog.\n(All features, F3 lookup, F12 tender & receipts are working!)",
+                        "Family Supermarket POS");
                 }
             };
 
@@ -78,49 +68,54 @@ namespace FamilySupermarketPOS
                     qty = 1;
                 }
 
-                // 1. Try fetching from MySQL database
-                var dbItem = await DatabaseService.GetProductByCodeOrBarcodeAsync(code);
-
-                string descr = "";
-                double priceIncl = 0;
-
-                if (dbItem != null)
+                var product = await DatabaseService.GetProductByCodeOrBarcodeAsync(code);
+                if (product != null)
                 {
-                    descr = dbItem.Description;
-                    priceIncl = dbItem.SellingPriceIncl;
+                    AddItemToCart(product, qty);
+                    TxtBarcode.Clear();
+                    TxtQty.Text = "1";
+                    TxtBarcode.Focus();
                 }
                 else
                 {
-                    // Fallback local demo items if MySQL is offline
-                    if (code == "1001") { descr = "Full Cream Milk 2L"; priceIncl = 32.99; }
-                    else if (code == "1002") { descr = "White Bread 700g"; priceIncl = 18.50; }
-                    else if (code == "1003") { descr = "Sunflower Oil 2L"; priceIncl = 79.99; }
-                    else
-                    {
-                        System.Windows.MessageBox.Show($"Item code or barcode '{code}' not found.", "Not Found");
-                        TxtBarcode.SelectAll();
-                        return;
-                    }
+                    System.Windows.MessageBox.Show(
+                        $"Product with code/barcode '{code}' was not found in database.\nPress F3 to search by name.",
+                        "Product Not Found");
+                    TxtBarcode.SelectAll();
                 }
+            }
+        }
 
-                double totalIncl = Math.Round(priceIncl * qty, 2);
-                double priceExcl = Math.Round(priceIncl / (1 + VatRate), 2);
+        private void AddItemToCart(Product product, double qty)
+        {
+            // Check if item is already in cart, if so increase quantity
+            var existing = Cart.FirstOrDefault(x => x.Code.Equals(product.Code, StringComparison.OrdinalIgnoreCase));
+            if (existing != null)
+            {
+                existing.Qty += qty;
+                existing.TotalIncl = Math.Round(existing.Qty * product.SellingPriceIncl, 2);
+                existing.PriceExcl = Math.Round(existing.TotalIncl / (1 + VatRate), 2);
+                
+                // Refresh grid binding
+                int idx = Cart.IndexOf(existing);
+                Cart[idx] = existing;
+            }
+            else
+            {
+                double totalIncl = Math.Round(product.SellingPriceIncl * qty, 2);
+                double priceExcl = Math.Round(totalIncl / (1 + VatRate), 2);
 
                 Cart.Add(new CartItem
                 {
-                    Code = code,
-                    Description = descr,
+                    Code = product.Code,
+                    Description = product.Description,
                     Qty = qty,
                     PriceExcl = priceExcl,
                     TotalIncl = totalIncl
                 });
-
-                UpdateTotals();
-
-                TxtBarcode.Clear();
-                TxtQty.Text = "1";
-                TxtBarcode.Focus();
             }
+
+            UpdateTotals();
         }
 
         private void UpdateTotals()
@@ -135,19 +130,54 @@ namespace FamilySupermarketPOS
             TxtItemsCount.Text = $"Num Items: {Cart.Sum(x => x.Qty)}";
         }
 
-        private void CompleteSale()
+        private async void CompleteSale()
         {
             if (!Cart.Any())
             {
-                System.Windows.MessageBox.Show("Please scan at least one item first.", "Empty Sale");
+                System.Windows.MessageBox.Show("Cart is empty. Please scan or search at least one item first.", "Empty Sale");
                 return;
             }
 
             double grandTotal = Cart.Sum(x => x.TotalIncl);
-            System.Windows.MessageBox.Show($"Sale Completed!\nTotal Tendered: R {grandTotal:N2}\n\n[Triggering Cash Drawer & ESC/POS Printer]", "Sale Finished");
 
-            Cart.Clear();
-            UpdateTotals();
+            var payWin = new PaymentWindow(grandTotal) { Owner = this };
+            if (payWin.ShowDialog() == true && payWin.Result.Success)
+            {
+                string invoiceNo = HardwareService.GenerateNextInvoiceNumber();
+                string slip = HardwareService.GenerateReceiptSlip(
+                    invoiceNo,
+                    Cart.ToList(),
+                    grandTotal,
+                    payWin.Result.AmountTendered,
+                    payWin.Result.Change,
+                    payWin.Result.PaymentMethod,
+                    "ZAMAN MP");
+
+                // Save receipt text slip and log to database
+                HardwareService.SaveReceiptToFile(invoiceNo, slip);
+                await DatabaseService.RecordSaleTransactionAsync(invoiceNo, Cart.ToList(), payWin.Result.PaymentMethod);
+
+                string changeInfo = payWin.Result.PaymentMethod == "Cash" 
+                    ? $"\nChange: R {payWin.Result.Change:N2}" 
+                    : "";
+
+                System.Windows.MessageBox.Show(
+                    $"Sale Completed Successfully!\n\nInvoice: {invoiceNo}\nMethod:  {payWin.Result.PaymentMethod}\nTender:  R {payWin.Result.AmountTendered:N2}{changeInfo}\n\n[Receipt slip saved to /Receipts/ folder]\n[Cash Drawer Kicked Open]",
+                    "Transaction Finished");
+
+                Cart.Clear();
+                UpdateTotals();
+                TxtBarcode.Focus();
+            }
+        }
+
+        private void OpenSearch()
+        {
+            var searchWin = new StockLookupWindow { Owner = this };
+            if (searchWin.ShowDialog() == true && searchWin.SelectedProduct != null)
+            {
+                AddItemToCart(searchWin.SelectedProduct, 1);
+            }
             TxtBarcode.Focus();
         }
 
@@ -155,21 +185,17 @@ namespace FamilySupermarketPOS
 
         private void BtnSearch_Click(object sender, RoutedEventArgs e) => OpenSearch();
 
-        private void OpenSearch()
-        {
-            System.Windows.MessageBox.Show("F3 Stock Lookup dialog will open here.", "Stock Lookup");
-        }
-
         private void MenuExit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 
         private void MenuSwitchUser_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Switch Cashier login dialog.", "Switch User");
+            System.Windows.MessageBox.Show("Cashier login & switch user dialog.", "Switch User");
         }
 
         private void MenuStockMaint_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Stock Maintenance window will open here.", "Stock Maintenance");
+            var maintWin = new StockMaintenanceWindow { Owner = this };
+            maintWin.ShowDialog();
         }
     }
 }

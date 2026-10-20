@@ -1,0 +1,91 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.StockMaintenanceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Stock Maintenance - Family Supermarket" Height="700" Width="1050"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Search & Actions -->
+            <RowDefinition Height="*"/>    <!-- Stock Grid -->
+            <RowDefinition Height="Auto"/> <!-- Product Edit Form -->
+        </Grid.RowDefinitions>
+
+        <!-- Top Header & Search -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBox x:Name="TxtSearch" Grid.Column="0" 
+                        PlaceholderText="Filter stock items by code, description, or department..." 
+                        FontSize="15" Icon="{ui:SymbolIcon Symbol=Search24}"
+                        TextChanged="TxtSearch_TextChanged"/>
+
+            <ui:Button Grid.Column="1" Content="+ Add New Item" Margin="10,0,0,0" 
+                       Appearance="Primary" Click="BtnNewItem_Click"/>
+        </Grid>
+
+        <!-- Stock Grid -->
+        <ui:DataGrid Grid.Row="1" x:Name="GridStock" AutoGenerateColumns="False" 
+                     CanUserAddRows="False" SelectionMode="Single" FontSize="13"
+                     SelectionChanged="GridStock_SelectionChanged">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="110"/>
+                <DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="150"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="130"/>
+                <DataGridTextColumn Header="Cost (Excl)" Binding="{Binding CostDisplay}" Width="120"/>
+                <DataGridTextColumn Header="Selling (Incl)" Binding="{Binding SellingPriceDisplay}" Width="120"/>
+                <DataGridTextColumn Header="SOH" Binding="{Binding SohDisplay}" Width="80"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <!-- Edit Form Card -->
+        <ui:Card Grid.Row="2" Margin="0,12,0,0" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="160"/>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="140"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Row 1: Code, Barcode, Description -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Item Code:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="0" x:Name="FormCode" Margin="0,0,10,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Barcode / SKU:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="1" x:Name="FormBarcode" Margin="0,0,10,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Description:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="2" x:Name="FormDescr" Margin="0,0,10,10"/>
+
+                <!-- Row 1 continued: Dept, Cost, Selling -->
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="Department:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="3" x:Name="FormDept" Margin="0,0,10,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Cost Price Excl:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="4" x:Name="FormCost" Margin="0,0,10,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="5" Text="Selling Price Incl:" Margin="0,0,0,4" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="5" x:Name="FormSelling" Margin="0,0,0,10"/>
+
+                <!-- Row 2: Bottom action buttons -->
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
+                    <ui:Button Content="Clear Form" Appearance="Secondary" Margin="0,0,10,0" Click="BtnClear_Click"/>
+                    <ui:Button Content="Save to Database" Appearance="Primary" Padding="25,0" Height="36" Click="BtnSave_Click"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>
