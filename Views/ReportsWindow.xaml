@@ -5,7 +5,20 @@
         Title="Retail Reports &amp; Analytics - Blue_Knight POS" Height="740" Width="1100"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Retail Reports &amp; Analytics - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title & Report Switcher -->
             <RowDefinition Height="*"/>    <!-- Report View Grid -->
@@ -50,5 +63,6 @@
                 </StackPanel>
             </Grid>
         </ui:Card>
+        </Grid>
     </Grid>
 </ui:FluentWindow>

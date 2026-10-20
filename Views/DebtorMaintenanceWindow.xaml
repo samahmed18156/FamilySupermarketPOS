@@ -5,7 +5,20 @@
         Title="Customer Account Maintenance - Blue_Knight POS" Height="680" Width="950"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Customer Account Maintenance - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -57,5 +70,6 @@
                 </StackPanel>
             </Grid>
         </ui:Card>
+        </Grid>
     </Grid>
 </ui:FluentWindow>

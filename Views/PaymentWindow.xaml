@@ -5,7 +5,20 @@
         Title="F12 - Payment &amp; Tender" Height="580" Width="680"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
 
-    <Grid Margin="24">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="F12 - Payment &amp; Tender"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="24" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Total banner -->
             <RowDefinition Height="Auto"/> <!-- Payment method buttons -->
@@ -81,6 +94,7 @@
                 <ui:Button x:Name="BtnComplete" Content="Finish &amp; Print Receipt (Enter)" Appearance="Primary" 
                            Height="45" Padding="25,0" FontWeight="Bold" FontSize="15" Click="BtnComplete_Click"/>
             </StackPanel>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

@@ -5,7 +5,20 @@
         Title="F5 - Apply Discount - Blue_Knight POS" Height="420" Width="480"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
 
-    <Grid Margin="20">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="F5 - Apply Discount - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="20" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="*"/>    <!-- Card -->
@@ -37,6 +50,7 @@
             <ui:Button Content="Cancel (Esc)" Appearance="Secondary" Height="40" Padding="18,0" Click="BtnCancel_Click"/>
             <ui:Button Content="Apply Discount (Enter)" Appearance="Primary" Height="40" Padding="20,0" 
                        HorizontalAlignment="Right" FontWeight="Bold" Click="BtnApply_Click"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

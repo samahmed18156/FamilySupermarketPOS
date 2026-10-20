@@ -5,7 +5,20 @@
         Title="F10 - Last Receipt Reprint - Blue_Knight POS" Height="620" Width="480"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
 
-    <Grid Margin="16">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="F10 - Last Receipt Reprint - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="16" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -25,6 +38,7 @@
             <ui:Button Content="Close (Esc)" Appearance="Secondary" Height="38" Padding="20,0" Click="BtnClose_Click"/>
             <ui:Button Content="Print Copy (Enter)" Appearance="Primary" Height="38" Padding="20,0" 
                        HorizontalAlignment="Right" FontWeight="Bold" Click="BtnPrint_Click"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

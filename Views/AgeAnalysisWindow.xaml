@@ -5,7 +5,20 @@
         Title="Debtors Age Analysis &amp; Statements - Blue_Knight POS" Height="680" Width="1050"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Debtors Age Analysis &amp; Statements - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="*"/>    <!-- Grid -->
@@ -36,6 +49,7 @@
             <ui:Button Content="Close" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnClose_Click"/>
             <TextBlock x:Name="TxtTotalOutstanding" Text="Total Outstanding: R 0.00" HorizontalAlignment="Right" 
                        VerticalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="#0078D4"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

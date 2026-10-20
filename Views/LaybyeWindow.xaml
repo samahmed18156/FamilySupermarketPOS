@@ -5,7 +5,20 @@
         Title="Customer Laybye Maintenance - Blue_Knight POS" Height="680" Width="1000"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Customer Laybye Maintenance - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title & Filter -->
             <RowDefinition Height="*"/>    <!-- Laybyes DataGrid -->
@@ -56,5 +69,6 @@
                 </StackPanel>
             </Grid>
         </ui:Card>
+        </Grid>
     </Grid>
 </ui:FluentWindow>

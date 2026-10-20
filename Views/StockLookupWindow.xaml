@@ -5,7 +5,20 @@
         Title="F3 - Stock Price &amp; Item Lookup" Height="600" Width="850"
         WindowStartupLocation="CenterOwner" ResizeMode="CanResize">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="F3 - Stock Price &amp; Item Lookup"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Search bar -->
             <RowDefinition Height="*"/>    <!-- DataGrid -->
@@ -54,6 +67,7 @@
                 <ui:Button Content="Select &amp; Add to Cart (Enter)" Appearance="Primary" 
                            Click="BtnSelect_Click"/>
             </StackPanel>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

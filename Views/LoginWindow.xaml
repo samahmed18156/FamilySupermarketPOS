@@ -5,7 +5,20 @@
         Title="Cashier Login - Blue_Knight POS" Height="460" Width="480"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
 
-    <Grid Margin="24">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Cashier Login - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="24" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="*"/>    <!-- Form -->
@@ -53,6 +66,7 @@
             <ui:Button Content="Cancel" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnCancel_Click"/>
             <ui:Button Content="Log In (Enter)" Appearance="Primary" Height="40" Padding="25,0" 
                        HorizontalAlignment="Right" FontWeight="Bold" Click="BtnLogin_Click"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

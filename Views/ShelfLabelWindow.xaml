@@ -5,7 +5,20 @@
         Title="Shelf Talker &amp; Barcode Label Generator - Blue_Knight POS" Height="650" Width="800"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
 
-    <Grid Margin="20">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Shelf Talker &amp; Barcode Label Generator - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="20" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="Auto"/> <!-- Item Selector -->
@@ -71,6 +84,7 @@
             <ui:Button Content="Close" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnClose_Click"/>
             <ui:Button Content="Print Shelf Label (Zebra / Thermal)" Appearance="Primary" Height="40" Padding="25,0" 
                        HorizontalAlignment="Right" FontWeight="Bold" Click="BtnPrint_Click"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

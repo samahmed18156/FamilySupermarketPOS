@@ -5,7 +5,20 @@
         Title="Cash Up Reconciliation - Blue_Knight POS" Height="700" Width="820"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="20">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Cash Up Reconciliation - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="20" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- Title -->
             <RowDefinition Height="*"/>    <!-- Note / Coin Denominations -->
@@ -131,6 +144,7 @@
             <ui:Button Content="Close" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnClose_Click"/>
             <ui:Button Content="Save &amp; Print Cash Up Slip" Appearance="Primary" Height="40" Padding="25,0" 
                        HorizontalAlignment="Right" FontWeight="Bold" Click="BtnPrint_Click"/>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>

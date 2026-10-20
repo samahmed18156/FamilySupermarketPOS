@@ -5,7 +5,20 @@
         Title="Department Maintenance - Blue_Knight POS" Height="580" Width="700"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Department Maintenance - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="False"
+                     CanMaximize="False" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -45,5 +58,6 @@
                 <ui:Button Grid.Row="1" Grid.Column="3" Content="Delete" Appearance="Danger" Click="BtnDelete_Click"/>
             </Grid>
         </ui:Card>
+        </Grid>
     </Grid>
 </ui:FluentWindow>

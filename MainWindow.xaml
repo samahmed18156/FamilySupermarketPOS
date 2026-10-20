@@ -2,22 +2,31 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite" Height="820" Width="1240"
+        Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite" Height="840" Width="1240"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- 0. Menu Bar -->
-            <RowDefinition Height="Auto"/> <!-- 1. Store & Cashier Header -->
-            <RowDefinition Height="Auto"/> <!-- 2. Customer / Account Strip -->
-            <RowDefinition Height="Auto"/> <!-- 3. Barcode & Action Strip -->
-            <RowDefinition Height="*"/>    <!-- 4. Scanned Items Table -->
-            <RowDefinition Height="Auto"/> <!-- 5. Financial Totals & Checkout -->
-            <RowDefinition Height="Auto"/> <!-- 6. Keyboard Shortcuts Footer -->
+            <RowDefinition Height="Auto"/> <!-- 0. Window TitleBar (Minimize, Maximize, Close) -->
+            <RowDefinition Height="Auto"/> <!-- 1. Menu Bar -->
+            <RowDefinition Height="Auto"/> <!-- 2. Store & Cashier Header -->
+            <RowDefinition Height="Auto"/> <!-- 3. Customer / Account Strip -->
+            <RowDefinition Height="Auto"/> <!-- 4. Barcode & Action Strip -->
+            <RowDefinition Height="*"/>    <!-- 5. Scanned Items Table -->
+            <RowDefinition Height="Auto"/> <!-- 6. Financial Totals & Checkout -->
+            <RowDefinition Height="Auto"/> <!-- 7. Keyboard Shortcuts Footer -->
         </Grid.RowDefinitions>
 
-        <!-- 0. Top Menu Bar (Full MiPOS Structure A to Z) -->
-        <Menu Grid.Row="0" Background="#1A1A1A" Foreground="White" FontSize="13">
+        <!-- 0. Modern Window TitleBar with Minimize, Maximize, and Close buttons -->
+        <ui:TitleBar Grid.Row="0"
+                     Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite"
+                     ShowMinimize="True"
+                     ShowMaximize="True"
+                     CanMaximize="True"
+                     Icon="{ui:SymbolIcon Symbol=Shield24}" />
+
+        <!-- 1. Top Menu Bar (Full MiPOS Structure A to Z) -->
+        <Menu Grid.Row="1" Background="#1A1A1A" Foreground="White" FontSize="13">
             <MenuItem Header="_File">
                 <MenuItem Header="Switch Cashier (Login)" Click="MenuSwitchUser_Click"/>
                 <MenuItem Header="Lock POS Terminal" Click="MenuLock_Click"/>
@@ -63,8 +72,8 @@
             </MenuItem>
         </Menu>
 
-        <!-- 1. Store Header & Cashier Status -->
-        <Grid Grid.Row="1" Margin="20,10,20,10">
+        <!-- 2. Store Header & Cashier Status -->
+        <Grid Grid.Row="2" Margin="20,10,20,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <ui:SymbolIcon Symbol="Shield24" FontSize="28" Margin="0,0,12,0" Foreground="#0078D4"/>
                 <StackPanel>
@@ -81,8 +90,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- 2. Customer / Account Strip (Matches MiPOS CASH / Account) -->
-        <ui:Card Grid.Row="2" Margin="20,0,20,10" Padding="10">
+        <!-- 3. Customer / Account Strip (Matches MiPOS CASH / Account) -->
+        <ui:Card Grid.Row="3" Margin="20,0,20,10" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -110,8 +119,8 @@
             </Grid>
         </ui:Card>
 
-        <!-- 3. Barcode Entry & Action Toolbar -->
-        <ui:Card Grid.Row="3" Margin="20,0,20,10" Padding="10">
+        <!-- 4. Barcode Entry & Action Toolbar -->
+        <ui:Card Grid.Row="4" Margin="20,0,20,10" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -144,8 +153,8 @@
             </Grid>
         </ui:Card>
 
-        <!-- 4. Scanned Items DataGrid -->
-        <ui:DataGrid Grid.Row="4" x:Name="DataGridCart" Margin="20,0,20,0"
+        <!-- 5. Scanned Items DataGrid -->
+        <ui:DataGrid Grid.Row="5" x:Name="DataGridCart" Margin="20,0,20,0"
                      AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" FontSize="14">
             <ui:DataGrid.Columns>
                 <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="140"/>
@@ -157,8 +166,8 @@
             </ui:DataGrid.Columns>
         </ui:DataGrid>
 
-        <!-- 5. Totals & Checkout -->
-        <ui:Card Grid.Row="5" Margin="20,10,20,0" Padding="14">
+        <!-- 6. Totals & Checkout -->
+        <ui:Card Grid.Row="6" Margin="20,10,20,0" Padding="14">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -182,8 +191,8 @@
             </Grid>
         </ui:Card>
 
-        <!-- 6. Bottom Shortcuts Bar -->
-        <StatusBar Grid.Row="6" Margin="20,6,20,6" Background="Transparent">
+        <!-- 7. Bottom Shortcuts Bar -->
+        <StatusBar Grid.Row="7" Margin="20,6,20,6" Background="Transparent">
             <StatusBarItem>
                 <TextBlock Text="[Enter] Scan  |  [F3] Lookup  |  [F5] Disc  |  [F6] Price  |  [F8] Return  |  [F10] Reprint  |  [Ctrl+A] Acc  |  [Del] Remove  |  [F12] Done" 
                            FontSize="12" Foreground="Gray"/>

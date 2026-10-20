@@ -5,7 +5,20 @@
         Title="Customer Quotations - Blue_Knight POS" Height="680" Width="1000"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="18">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Grid.Row="0"
+                     Title="Customer Quotations - Blue_Knight POS"
+                     ShowMinimize="False"
+                     ShowMaximize="True"
+                     CanMaximize="True" />
+
+        <Grid Margin="18" Grid.Row="1">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -37,6 +50,7 @@
                 <ui:Button Content="Print Quotation Slip" Appearance="Secondary" Margin="0,0,10,0" Height="40" Padding="20,0" Click="BtnPrintQuote_Click"/>
                 <ui:Button Content="Convert Quote to Active Sale" Appearance="Primary" Height="40" Padding="25,0" FontWeight="Bold" Click="BtnConvert_Click"/>
             </StackPanel>
+        </Grid>
         </Grid>
     </Grid>
 </ui:FluentWindow>
