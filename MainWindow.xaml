@@ -2,96 +2,124 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite" Height="840" Width="1240"
-        WindowStartupLocation="CenterScreen">
+        Title="Blue_Knight POS - Enterprise Retail Terminal Suite" Height="860" Width="1280"
+        WindowStartupLocation="CenterScreen"
+        WindowBackdropType="Mica"
+        ExtendsContentIntoTitleBar="True">
 
-    <Grid>
+    <Grid Background="#101114">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/> <!-- 0. Window TitleBar (Minimize, Maximize, Close) -->
             <RowDefinition Height="Auto"/> <!-- 1. Menu Bar -->
             <RowDefinition Height="Auto"/> <!-- 2. Store & Cashier Header -->
-            <RowDefinition Height="Auto"/> <!-- 3. Customer / Account Strip -->
+            <RowDefinition Height="Auto"/> <!-- 3. Customer / VIP Account Strip -->
             <RowDefinition Height="Auto"/> <!-- 4. Barcode & Action Strip -->
-            <RowDefinition Height="*"/>    <!-- 5. Scanned Items Table -->
-            <RowDefinition Height="Auto"/> <!-- 6. Financial Totals & Checkout -->
-            <RowDefinition Height="Auto"/> <!-- 7. Keyboard Shortcuts Footer -->
+            <RowDefinition Height="*"/>    <!-- 5. Scanned Items Table & Empty State -->
+            <RowDefinition Height="Auto"/> <!-- 6. Hero Financial Totals & Checkout -->
+            <RowDefinition Height="Auto"/> <!-- 7. Physical Keycaps Shortcuts Footer -->
         </Grid.RowDefinitions>
 
-        <!-- 0. Modern Window TitleBar with Minimize, Maximize, and Close buttons -->
+        <!-- 0. Modern Window TitleBar with native Minimize, Maximize/Restore, Close -->
         <ui:TitleBar Grid.Row="0"
-                     Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite"
+                     Title="Blue_Knight POS - Enterprise Retail Terminal Suite"
                      ShowMinimize="True"
                      ShowMaximize="True"
                      CanMaximize="True"
                      Icon="{ui:SymbolIcon Symbol=Shield24}" />
 
-        <!-- 1. Top Menu Bar (Full MiPOS Structure A to Z) -->
-        <Menu Grid.Row="1" Background="#1A1A1A" Foreground="White" FontSize="13">
-            <MenuItem Header="_File">
-                <MenuItem Header="Switch Cashier (Login)" Click="MenuSwitchUser_Click"/>
-                <MenuItem Header="Lock POS Terminal" Click="MenuLock_Click"/>
-                <Separator/>
-                <MenuItem Header="E_xit" Click="MenuExit_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Stock">
-                <MenuItem Header="Stock Maintenance" Click="MenuStockMaint_Click"/>
-                <MenuItem Header="Department Maintenance" Click="MenuDeptMaint_Click"/>
-                <MenuItem Header="Stock Adjustments (Debit/Credit)" Click="MenuStockAdj_Click"/>
-                <MenuItem Header="Stock Take &amp; Audit Process" Click="MenuStockTake_Click"/>
-                <Separator/>
-                <MenuItem Header="Print Barcode &amp; Shelf Labels" Click="MenuShelfLabels_Click"/>
-                <MenuItem Header="Zero SOH (Zero Stock on Hand) Report" Click="MenuReports_Click"/>
-                <MenuItem Header="Stock Valuation Report" Click="MenuReports_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Creditors">
-                <MenuItem Header="Goods Received Note (GRN)" Click="MenuGrn_Click"/>
-                <MenuItem Header="Creditors Maintenance (Suppliers)" Click="MenuCreditorMaint_Click"/>
-                <MenuItem Header="Supplier Purchase Orders"/>
-                <MenuItem Header="Creditor Transactions &amp; Audit"/>
-            </MenuItem>
-            <MenuItem Header="_Debtors">
-                <MenuItem Header="Customer Account Lookup (Ctrl+A)" Click="MenuDebtors_Click"/>
-                <MenuItem Header="Debtors Maintenance" Click="MenuDebtorMaint_Click"/>
-                <MenuItem Header="Laybye Maintenance" Click="MenuLaybye_Click"/>
-                <MenuItem Header="Formal Quotations" Click="MenuQuotes_Click"/>
-                <MenuItem Header="Debtors Statements &amp; Age Analysis" Click="MenuAgeAnalysis_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Utility">
-                <MenuItem Header="Cash Up Reconciliation" Click="MenuCashUp_Click"/>
-                <MenuItem Header="Petty Cash Vouchers" Click="MenuPettyCash_Click"/>
-                <MenuItem Header="Day End Process" Click="MenuDayEnd_Click"/>
-                <MenuItem Header="Month End Process" Click="MenuMonthEnd_Click"/>
-                <Separator/>
-                <MenuItem Header="User &amp; Cashier Maintenance" Click="MenuUserMaint_Click"/>
-                <MenuItem Header="Company &amp; Store Details" Click="MenuCompanyDetails_Click"/>
-                <MenuItem Header="MySQL Database Configuration" Click="MenuDatabaseConfig_Click"/>
-            </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="Quick Reprint Last Slip (F10)" Click="MenuReprint_Click"/>
-                <MenuItem Header="About Blue_Knight POS" Click="MenuAbout_Click"/>
-            </MenuItem>
-        </Menu>
+        <!-- 1. Sleek Floating Menu Bar -->
+        <Border Grid.Row="1" Background="#161820" BorderBrush="#262936" BorderThickness="0,0,0,1">
+            <Menu Background="Transparent" Foreground="#E2E8F0" FontSize="13" Padding="8,3">
+                <MenuItem Header="_File">
+                    <MenuItem Header="Switch Cashier (Login)" Click="MenuSwitchUser_Click"/>
+                    <MenuItem Header="Lock POS Terminal" Click="MenuLock_Click"/>
+                    <Separator/>
+                    <MenuItem Header="E_xit" Click="MenuExit_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Stock">
+                    <MenuItem Header="Stock Maintenance" Click="MenuStockMaint_Click"/>
+                    <MenuItem Header="Department Maintenance" Click="MenuDeptMaint_Click"/>
+                    <MenuItem Header="Stock Adjustments (Debit/Credit)" Click="MenuStockAdj_Click"/>
+                    <MenuItem Header="Stock Take &amp; Audit Process" Click="MenuStockTake_Click"/>
+                    <Separator/>
+                    <MenuItem Header="Print Barcode &amp; Shelf Labels" Click="MenuShelfLabels_Click"/>
+                    <MenuItem Header="Zero SOH (Zero Stock on Hand) Report" Click="MenuReports_Click"/>
+                    <MenuItem Header="Stock Valuation Report" Click="MenuReports_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Creditors">
+                    <MenuItem Header="Goods Received Note (GRN)" Click="MenuGrn_Click"/>
+                    <MenuItem Header="Creditors Maintenance (Suppliers)" Click="MenuCreditorMaint_Click"/>
+                    <MenuItem Header="Supplier Purchase Orders"/>
+                    <MenuItem Header="Creditor Transactions &amp; Audit"/>
+                </MenuItem>
+                <MenuItem Header="_Debtors">
+                    <MenuItem Header="Customer Account Lookup (Ctrl+A)" Click="MenuDebtors_Click"/>
+                    <MenuItem Header="Debtors Maintenance" Click="MenuDebtorMaint_Click"/>
+                    <MenuItem Header="Laybye Maintenance" Click="MenuLaybye_Click"/>
+                    <MenuItem Header="Formal Quotations" Click="MenuQuotes_Click"/>
+                    <MenuItem Header="Debtors Statements &amp; Age Analysis" Click="MenuAgeAnalysis_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Utility">
+                    <MenuItem Header="Cash Up Reconciliation" Click="MenuCashUp_Click"/>
+                    <MenuItem Header="Petty Cash Vouchers" Click="MenuPettyCash_Click"/>
+                    <MenuItem Header="Day End Process" Click="MenuDayEnd_Click"/>
+                    <MenuItem Header="Month End Process" Click="MenuMonthEnd_Click"/>
+                    <Separator/>
+                    <MenuItem Header="User &amp; Cashier Maintenance" Click="MenuUserMaint_Click"/>
+                    <MenuItem Header="Company &amp; Store Details" Click="MenuCompanyDetails_Click"/>
+                    <MenuItem Header="MySQL Database Configuration" Click="MenuDatabaseConfig_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem Header="Quick Reprint Last Slip (F10)" Click="MenuReprint_Click"/>
+                    <MenuItem Header="About Blue_Knight POS" Click="MenuAbout_Click"/>
+                </MenuItem>
+            </Menu>
+        </Border>
 
-        <!-- 2. Store Header & Cashier Status -->
-        <Grid Grid.Row="2" Margin="20,10,20,10">
+        <!-- 2. Store Header & Live Cashier / Clock Status -->
+        <Grid Grid.Row="2" Margin="20,12,20,10">
+            <!-- Brand & Station Identity -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <ui:SymbolIcon Symbol="Shield24" FontSize="28" Margin="0,0,12,0" Foreground="#0078D4"/>
-                <StackPanel>
-                    <TextBlock x:Name="TxtStoreTitle" Text="BLUE_KNIGHT SUPERMARKET" FontSize="20" FontWeight="Bold"/>
-                    <TextBlock x:Name="TxtCashier" Text="Cashier: ZAMAN MP  |  Station: M1  |  Mode: Retail POS" FontSize="12" Foreground="Gray"/>
+                <Border Background="#002D5A" BorderBrush="#0078D4" BorderThickness="1.5" CornerRadius="10" Padding="10,8" Margin="0,0,14,0">
+                    <ui:SymbolIcon Symbol="Shield24" FontSize="26" Foreground="#38B6FF"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtStoreTitle" Text="BLUE_KNIGHT" FontSize="22" FontWeight="Black" Foreground="White"/>
+                    <TextBlock Text="ENTERPRISE SUPERMARKET &amp; WHOLESALE TERMINAL" FontSize="10.5" FontWeight="Bold" Foreground="#38B6FF" Margin="0,1,0,0"/>
                 </StackPanel>
+
+                <!-- Live Cashier Pill -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="20" Padding="12,5" Margin="24,0,0,0" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="TxtCashier" Text="Cashier: ZAMAN MP  |  Station: M1" FontSize="12.5" FontWeight="SemiBold" Foreground="#E2E8F0"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
 
+            <!-- Status Indicator & Live Digital Clock -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <Border x:Name="BadgeReturnMode" Background="#D83B01" CornerRadius="4" Padding="8,4" Margin="0,0,15,0" Visibility="Collapsed">
-                    <TextBlock Text="⚠ RETURNS &amp; CREDIT NOTE MODE ACTIVE" FontWeight="Bold" FontSize="12" Foreground="White"/>
+                <!-- Return Mode Alert Badge -->
+                <Border x:Name="BadgeReturnMode" Background="#7F1D1D" BorderBrush="#EF4444" BorderThickness="1.5" CornerRadius="8" Padding="12,6" Margin="0,0,16,0" Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Warning24" Foreground="#FCA5A5" Margin="0,0,6,0"/>
+                        <TextBlock Text="⚠ RETURNS &amp; CREDIT NOTE MODE ACTIVE" FontWeight="Bold" FontSize="12" Foreground="#FEE2E2"/>
+                    </StackPanel>
                 </Border>
-                <TextBlock x:Name="TxtCurrentDate" FontSize="15" FontWeight="SemiBold" Foreground="#888888"/>
+
+                <!-- Digital Clock Pill -->
+                <Border Background="#181A24" BorderBrush="#282C3D" BorderThickness="1" CornerRadius="8" Padding="14,6">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Clock24" FontSize="15" Foreground="#38B6FF" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="TxtCurrentTime" Text="12:00:00" FontSize="15" FontWeight="Bold" Foreground="#38B6FF" Margin="0,0,10,0"/>
+                        <TextBlock x:Name="TxtCurrentDate" Text="20 October 2026" FontSize="12.5" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </Grid>
 
-        <!-- 3. Customer / Account Strip (Matches MiPOS CASH / Account) -->
-        <ui:Card Grid.Row="3" Margin="20,0,20,10" Padding="10">
+        <!-- 3. Customer / VIP Account Strip -->
+        <Border Grid.Row="3" Margin="20,0,20,10" Background="#161822" BorderBrush="#26293A" BorderThickness="1" CornerRadius="10" Padding="12,8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -103,24 +131,34 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="Account Num:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0"/>
-                <ui:TextBox Grid.Column="1" x:Name="TxtAccountNum" Text="CASH" FontSize="13" TextAlignment="Center"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0">
+                    <Border Background="#064E3B" BorderBrush="#059669" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                        <TextBlock Text="ACCOUNT" FontSize="10" FontWeight="Bold" Foreground="#34D399"/>
+                    </Border>
+                    <TextBlock Text="Num:" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#94A3B8" FontSize="13"/>
+                </StackPanel>
 
-                <ui:Button Grid.Column="2" Content="Lookup (Ctrl+A)" Margin="6,0,15,0" 
-                           Appearance="Secondary" Click="BtnAccountLookup_Click"/>
+                <ui:TextBox Grid.Column="1" x:Name="TxtAccountNum" Text="CASH" FontSize="13" TextAlignment="Center" FontWeight="Bold"/>
 
-                <TextBlock Grid.Column="3" Text="Name:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0"/>
+                <ui:Button Grid.Column="2" Content="Lookup (Ctrl+A)" Margin="8,0,16,0" 
+                           Appearance="Secondary" Icon="{ui:SymbolIcon Symbol=Search24}" Click="BtnAccountLookup_Click"/>
+
+                <TextBlock Grid.Column="3" Text="Customer Name:" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#94A3B8" FontSize="13" Margin="0,0,8,0"/>
                 <ui:TextBox Grid.Column="4" x:Name="TxtAccountName" Text="Cash Sale" FontSize="13"/>
 
-                <TextBlock Grid.Column="5" x:Name="TxtCreditLimit" Text="Credit Limit: R 0.00" 
-                           VerticalAlignment="Center" Margin="20,0,15,0" Foreground="#AAAAAA"/>
-                <TextBlock Grid.Column="6" x:Name="TxtOsBal" Text="OS Balance: R 0.00" 
-                           VerticalAlignment="Center" Foreground="#AAAAAA"/>
-            </Grid>
-        </ui:Card>
+                <!-- Account Limits -->
+                <Border Grid.Column="5" Background="#1E2230" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="6" Padding="10,4" Margin="16,0,10,0">
+                    <TextBlock x:Name="TxtCreditLimit" Text="Limit: R 0.00" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="12" FontWeight="SemiBold"/>
+                </Border>
 
-        <!-- 4. Barcode Entry & Action Toolbar -->
-        <ui:Card Grid.Row="4" Margin="20,0,20,10" Padding="10">
+                <Border Grid.Column="6" Background="#1E2230" BorderBrush="#2D3348" BorderThickness="1" CornerRadius="6" Padding="10,4">
+                    <TextBlock x:Name="TxtOsBal" Text="Balance: R 0.00" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="12" FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 4. Barcode Entry & Tactile Keycap Actions Strip -->
+        <Border Grid.Row="4" Margin="20,0,20,10" Background="#161822" BorderBrush="#26293A" BorderThickness="1" CornerRadius="10" Padding="12,10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -133,70 +171,206 @@
 
                 <ui:TextBox x:Name="TxtBarcode" Grid.Column="0" 
                             PlaceholderText="Scan Barcode or Enter Product Code (e.g. 1001, 1002)..." 
-                            FontSize="16" Icon="{ui:SymbolIcon Symbol=BarcodeScanner24}"
+                            FontSize="16" Height="44" Icon="{ui:SymbolIcon Symbol=BarcodeScanner24}"
                             KeyDown="TxtBarcode_KeyDown"/>
 
                 <ui:TextBox x:Name="TxtQty" Grid.Column="1" Margin="8,0,0,0" 
-                            Text="1" TextAlignment="Center" FontSize="16"/>
+                            Text="1" TextAlignment="Center" FontSize="16" Height="44" FontWeight="Bold"/>
 
-                <ui:Button Grid.Column="2" Content="F3 - Lookup" Margin="8,0,0,0" 
-                           Icon="{ui:SymbolIcon Symbol=Search24}" Click="BtnSearch_Click"/>
+                <!-- [F3] Lookup Action Button -->
+                <Button Grid.Column="2" Margin="8,0,0,0" Height="44" Padding="14,0"
+                        Background="#0C2F3E" BorderBrush="#00BCD4" BorderThickness="1.5"
+                        Cursor="Hand" Click="BtnSearch_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#00BCD4" CornerRadius="4" Padding="5,2" Margin="0,0,8,0">
+                            <TextBlock Text="F3" FontWeight="Black" FontSize="11" Foreground="#08202A"/>
+                        </Border>
+                        <TextBlock Text="Lookup" FontWeight="SemiBold" FontSize="13.5" Foreground="#E0F7FA"/>
+                    </StackPanel>
+                </Button>
 
-                <ui:Button Grid.Column="3" Content="F5 - Discount" Margin="6,0,0,0" 
-                           Appearance="Secondary" Click="BtnDiscount_Click"/>
+                <!-- [F5] Discount Action Button -->
+                <Button Grid.Column="3" Margin="6,0,0,0" Height="44" Padding="14,0"
+                        Background="#352405" BorderBrush="#F59E0B" BorderThickness="1.5"
+                        Cursor="Hand" Click="BtnDiscount_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#F59E0B" CornerRadius="4" Padding="5,2" Margin="0,0,8,0">
+                            <TextBlock Text="F5" FontWeight="Black" FontSize="11" Foreground="#281A02"/>
+                        </Border>
+                        <TextBlock Text="Discount" FontWeight="SemiBold" FontSize="13.5" Foreground="#FEF3C7"/>
+                    </StackPanel>
+                </Button>
 
-                <ui:Button Grid.Column="4" Content="F6 - Price" Margin="6,0,0,0" 
-                           Appearance="Secondary" Click="BtnPriceOverride_Click"/>
+                <!-- [F6] Price Override Button -->
+                <Button Grid.Column="4" Margin="6,0,0,0" Height="44" Padding="14,0"
+                        Background="#261347" BorderBrush="#8B5CF6" BorderThickness="1.5"
+                        Cursor="Hand" Click="BtnPriceOverride_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#8B5CF6" CornerRadius="4" Padding="5,2" Margin="0,0,8,0">
+                            <TextBlock Text="F6" FontWeight="Black" FontSize="11" Foreground="#1B0A36"/>
+                        </Border>
+                        <TextBlock Text="Price" FontWeight="SemiBold" FontSize="13.5" Foreground="#EDE9FE"/>
+                    </StackPanel>
+                </Button>
 
-                <ui:Button x:Name="BtnToggleReturn" Grid.Column="5" Content="F8 - Return" Margin="6,0,0,0" 
-                           Appearance="Secondary" Click="BtnToggleReturn_Click"/>
+                <!-- [F8] Return / Refund Button -->
+                <Button x:Name="BtnToggleReturn" Grid.Column="5" Margin="6,0,0,0" Height="44" Padding="14,0"
+                        Background="#381014" BorderBrush="#EF4444" BorderThickness="1.5"
+                        Cursor="Hand" Click="BtnToggleReturn_Click">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="BadgeReturnKeycap" Background="#EF4444" CornerRadius="4" Padding="5,2" Margin="0,0,8,0">
+                            <TextBlock Text="F8" FontWeight="Black" FontSize="11" Foreground="#29070A"/>
+                        </Border>
+                        <TextBlock x:Name="TxtReturnBtnLabel" Text="Return" FontWeight="SemiBold" FontSize="13.5" Foreground="#FEE2E2"/>
+                    </StackPanel>
+                </Button>
             </Grid>
-        </ui:Card>
+        </Border>
 
-        <!-- 5. Scanned Items DataGrid -->
-        <ui:DataGrid Grid.Row="5" x:Name="DataGridCart" Margin="20,0,20,0"
-                     AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" FontSize="14">
-            <ui:DataGrid.Columns>
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="140"/>
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                <DataGridTextColumn Header="Qty" Binding="{Binding QtyDisplay}" Width="120"/>
-                <DataGridTextColumn Header="Unit Price" Binding="{Binding PriceExclDisplay}" Width="130"/>
-                <DataGridTextColumn Header="Disc" Binding="{Binding DiscountDisplay}" Width="90"/>
-                <DataGridTextColumn Header="Value (Incl)" Binding="{Binding TotalInclDisplay}" Width="140"/>
-            </ui:DataGrid.Columns>
-        </ui:DataGrid>
+        <!-- 5. Cart Table & Watermark Empty State -->
+        <Border Grid.Row="5" Margin="20,0,20,0" Background="#14151C" BorderBrush="#242735" BorderThickness="1" CornerRadius="10">
+            <Grid>
+                <!-- Scanned Items DataGrid -->
+                <ui:DataGrid x:Name="DataGridCart" Margin="2"
+                             AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" 
+                             FontSize="14" RowHeight="40" Background="Transparent" BorderThickness="0">
+                    <ui:DataGrid.Columns>
+                        <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="140"/>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                        <DataGridTextColumn Header="Qty" Binding="{Binding QtyDisplay}" Width="130"/>
+                        <DataGridTextColumn Header="Unit Price" Binding="{Binding PriceExclDisplay}" Width="130"/>
+                        <DataGridTextColumn Header="Discount" Binding="{Binding DiscountDisplay}" Width="110"/>
+                        <DataGridTextColumn Header="Value (Incl)" Binding="{Binding TotalInclDisplay}" Width="140"/>
+                        
+                        <!-- Mouse Remove Action Column -->
+                        <DataGridTemplateColumn Header="Action" Width="70">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Padding="8,2" Height="28" Width="36" Cursor="Hand"
+                                            Background="Transparent" BorderThickness="0"
+                                            ToolTip="Remove Item [Del]" Click="BtnDeleteItem_Click">
+                                        <TextBlock Text="✕" FontSize="14" FontWeight="Bold" Foreground="#EF4444"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </ui:DataGrid.Columns>
+                </ui:DataGrid>
 
-        <!-- 6. Totals & Checkout -->
-        <ui:Card Grid.Row="6" Margin="20,10,20,0" Padding="14">
+                <!-- Elegant Watermark for Empty Cart -->
+                <Border x:Name="EmptyCartWatermark" Background="Transparent" IsHitTestVisible="False" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Border Background="#1C202C" BorderBrush="#2B3144" BorderThickness="1" CornerRadius="36" Width="72" Height="72" Margin="0,0,0,14" HorizontalAlignment="Center">
+                            <ui:SymbolIcon Symbol="ShoppingBag24" FontSize="36" Foreground="#475569" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock Text="Ready to Scan Products" FontSize="18" FontWeight="SemiBold" Foreground="#64748B" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Scan a barcode with your barcode reader, enter code above, or press [F3] for Lookup" 
+                                   FontSize="13" Foreground="#475569" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- 6. Hero Financial Totals & Checkout -->
+        <Border Grid.Row="6" Margin="20,10,20,0" Background="#0C1424" BorderBrush="#1D3E74" BorderThickness="1.5" CornerRadius="12" Padding="18,12">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- Left Item Count & Subtotals -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBlock x:Name="TxtSubtotal" Text="Sub Total: R 0.00" FontSize="14" Foreground="#AAAAAA"/>
-                    <TextBlock x:Name="TxtVat" Text="VAT (15%): R 0.00" FontSize="14" Foreground="#AAAAAA" Margin="0,2,0,0"/>
-                    <TextBlock x:Name="TxtItemsCount" Text="Num Items: 0" FontSize="13" Foreground="Gray" Margin="0,3,0,0"/>
+                    <Border Background="#1A2744" BorderBrush="#253860" BorderThickness="1" CornerRadius="12" Padding="10,3" HorizontalAlignment="Left" Margin="0,0,0,6">
+                        <TextBlock x:Name="TxtItemsCount" Text="Items: 0" FontSize="12.5" FontWeight="Bold" Foreground="#38B6FF"/>
+                    </Border>
+                    <TextBlock x:Name="TxtSubtotal" Text="Sub Total (Excl): R 0.00" FontSize="13.5" Foreground="#94A3B8"/>
+                    <TextBlock x:Name="TxtVat" Text="VAT (15%):           R 0.00" FontSize="13.5" Foreground="#94A3B8" Margin="0,2,0,0"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="TOTAL: " FontSize="30" FontWeight="Bold" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="TxtTotal" Text="R 0.00" FontSize="36" FontWeight="Bold" 
-                               Foreground="#0078D4" VerticalAlignment="Center" Margin="10,0,25,0"/>
-                    <ui:Button x:Name="BtnCheckout" Content="F12 - Done (Tender)" Appearance="Primary" 
-                               FontSize="16" FontWeight="SemiBold" Padding="25,12" 
-                               Click="BtnCompleteSale_Click"/>
+                <!-- Spacer -->
+                <Grid Grid.Column="1"/>
+
+                <!-- Right Grand Total & Hero Tender Button -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,26,0" HorizontalAlignment="Right">
+                        <TextBlock Text="TOTAL DUE (INCL)" FontSize="12" FontWeight="Bold" Foreground="#94A3B8" HorizontalAlignment="Right"/>
+                        <TextBlock x:Name="TxtTotal" Text="R 0.00" FontSize="42" FontWeight="Black" 
+                                   Foreground="#00E5FF" HorizontalAlignment="Right" Margin="0,-4,0,0"/>
+                    </StackPanel>
+
+                    <!-- Hero Done Button -->
+                    <ui:Button x:Name="BtnCheckout" Height="58" Padding="32,0"
+                               Appearance="Primary" Cursor="Hand" Click="BtnCompleteSale_Click">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="#004C8C" CornerRadius="6" Padding="6,2" Margin="0,0,10,0">
+                                <TextBlock Text="F12" FontWeight="Black" FontSize="13" Foreground="#90CAF9"/>
+                            </Border>
+                            <TextBlock Text="DONE (TENDER) ➜" FontSize="16" FontWeight="Black" Foreground="White"/>
+                        </StackPanel>
+                    </ui:Button>
                 </StackPanel>
             </Grid>
-        </ui:Card>
+        </Border>
 
-        <!-- 7. Bottom Shortcuts Bar -->
-        <StatusBar Grid.Row="7" Margin="20,6,20,6" Background="Transparent">
-            <StatusBarItem>
-                <TextBlock Text="[Enter] Scan  |  [F3] Lookup  |  [F5] Disc  |  [F6] Price  |  [F8] Return  |  [F10] Reprint  |  [Ctrl+A] Acc  |  [Del] Remove  |  [F12] Done" 
-                           FontSize="12" Foreground="Gray"/>
-            </StatusBarItem>
-        </StatusBar>
+        <!-- 7. Physical Keycaps Shortcuts Footer -->
+        <Border Grid.Row="7" Margin="20,8,20,8" Background="Transparent">
+            <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!-- Enter -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="Enter" FontSize="11" FontWeight="Bold" Foreground="#38B6FF"/>
+                </Border>
+                <TextBlock Text="Scan" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F3 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F3" FontSize="11" FontWeight="Bold" Foreground="#00BCD4"/>
+                </Border>
+                <TextBlock Text="Lookup" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F5 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F5" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"/>
+                </Border>
+                <TextBlock Text="Discount" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F6 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F6" FontSize="11" FontWeight="Bold" Foreground="#8B5CF6"/>
+                </Border>
+                <TextBlock Text="Price" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F8 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F8" FontSize="11" FontWeight="Bold" Foreground="#EF4444"/>
+                </Border>
+                <TextBlock Text="Return" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F10 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F10" FontSize="11" FontWeight="Bold" Foreground="#38B6FF"/>
+                </Border>
+                <TextBlock Text="Reprint" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- Ctrl+A -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="Ctrl+A" FontSize="11" FontWeight="Bold" Foreground="#38B6FF"/>
+                </Border>
+                <TextBlock Text="Account" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- Del -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="Del" FontSize="11" FontWeight="Bold" Foreground="#EF4444"/>
+                </Border>
+                <TextBlock Text="Remove" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,14,0"/>
+
+                <!-- F12 -->
+                <Border Background="#1C1F2B" BorderBrush="#2C3142" BorderThickness="1" CornerRadius="4" Padding="6,2" Margin="0,0,4,0">
+                    <TextBlock Text="F12" FontSize="11" FontWeight="Bold" Foreground="#10B981"/>
+                </Border>
+                <TextBlock Text="Tender" FontSize="11.5" Foreground="#94A3B8" VerticalAlignment="Center"/>
+            </WrapPanel>
+        </Border>
     </Grid>
 </ui:FluentWindow>

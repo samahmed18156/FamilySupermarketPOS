@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using FamilySupermarketPOS.Models;
 using FamilySupermarketPOS.Services;
 using FamilySupermarketPOS.Views;
@@ -15,6 +17,7 @@ namespace FamilySupermarketPOS
         private const double VatRate = 0.15; // 15% South African VAT
         public ObservableCollection<CartItem> Cart { get; set; } = new();
         private bool _isReturnMode = false;
+        private DispatcherTimer? _clockTimer;
 
         public MainWindow()
         {
@@ -22,7 +25,19 @@ namespace FamilySupermarketPOS
             DataGridCart.ItemsSource = Cart;
             TxtCurrentDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
             TxtStoreTitle.Text = ConfigService.Current.StoreName;
-            TxtCashier.Text = $"Cashier: {ConfigService.Current.CashierName}  |  Station: {ConfigService.Current.StationId}  |  Mode: Retail POS";
+            TxtCashier.Text = $"Cashier: {ConfigService.Current.CashierName}  |  Station: {ConfigService.Current.StationId}";
+
+            // Live digital clock timer
+            _clockTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _clockTimer.Tick += (s, e) =>
+            {
+                TxtCurrentTime.Text = DateTime.Now.ToString("HH:mm:ss");
+            };
+            _clockTimer.Start();
+            TxtCurrentTime.Text = DateTime.Now.ToString("HH:mm:ss");
 
             Loaded += async (s, e) =>
             {
@@ -88,8 +103,10 @@ namespace FamilySupermarketPOS
         {
             _isReturnMode = !_isReturnMode;
             BadgeReturnMode.Visibility = _isReturnMode ? Visibility.Visible : Visibility.Collapsed;
-            BtnToggleReturn.Appearance = _isReturnMode ? ControlAppearance.Danger : ControlAppearance.Secondary;
-            BtnToggleReturn.Content = _isReturnMode ? "F8 - EXIT RETURN" : "F8 - Return";
+            TxtReturnBtnLabel.Text = _isReturnMode ? "EXIT RETURN" : "Return";
+            BtnToggleReturn.Background = _isReturnMode 
+                ? new SolidColorBrush(Color.FromRgb(185, 28, 28)) 
+                : new SolidColorBrush(Color.FromRgb(56, 16, 20));
         }
 
         private void BtnToggleReturn_Click(object sender, RoutedEventArgs e) => ToggleReturnMode();
@@ -110,7 +127,6 @@ namespace FamilySupermarketPOS
             {
                 double pct = discWin.DiscountPercent;
                 selected.Discount = pct;
-                double originalUnit = selected.PriceExcl * (1 + VatRate) / (1 - (selected.Discount / 100.0) == 0 ? 1 : 1);
                 selected.TotalIncl = Math.Round(selected.Qty * selected.PriceExcl * (1 + VatRate) * (1 - pct / 100.0), 2);
                 int idx = Cart.IndexOf(selected);
                 Cart[idx] = selected;
@@ -213,14 +229,26 @@ namespace FamilySupermarketPOS
 
         private void UpdateTotals()
         {
+            EmptyCartWatermark.Visibility = Cart.Any() ? Visibility.Collapsed : Visibility.Visible;
+
             double grandTotal = Cart.Sum(x => x.TotalIncl);
             double subTotal = Math.Round(grandTotal / (1 + VatRate), 2);
             double vat = Math.Round(grandTotal - subTotal, 2);
 
-            TxtSubtotal.Text = $"Sub Total: R {subTotal:N2}";
-            TxtVat.Text = $"VAT (15%): R {vat:N2}";
+            TxtSubtotal.Text = $"Sub Total (Excl): R {subTotal:N2}";
+            TxtVat.Text = $"VAT (15%):           R {vat:N2}";
             TxtTotal.Text = $"R {grandTotal:N2}";
-            TxtItemsCount.Text = $"Num Items: {Cart.Sum(x => Math.Abs(x.Qty))}";
+            TxtItemsCount.Text = $"Items: {Cart.Sum(x => Math.Abs(x.Qty))}";
+        }
+
+        private void BtnDeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.Button btn && btn.DataContext is CartItem item)
+            {
+                Cart.Remove(item);
+                UpdateTotals();
+                TxtBarcode.Focus();
+            }
         }
 
         private async void CompleteSale()
@@ -251,8 +279,8 @@ namespace FamilySupermarketPOS
                 Cart.Clear();
                 _isReturnMode = false;
                 BadgeReturnMode.Visibility = Visibility.Collapsed;
-                BtnToggleReturn.Appearance = ControlAppearance.Secondary;
-                BtnToggleReturn.Content = "F8 - Return";
+                TxtReturnBtnLabel.Text = "Return";
+                BtnToggleReturn.Background = new SolidColorBrush(Color.FromRgb(56, 16, 20));
                 UpdateTotals();
                 TxtBarcode.Focus();
                 return;
@@ -314,8 +342,8 @@ namespace FamilySupermarketPOS
                 var d = debtorWin.SelectedDebtor;
                 TxtAccountNum.Text = d.AccountNumber;
                 TxtAccountName.Text = d.Name;
-                TxtCreditLimit.Text = $"Credit Limit: {d.DisplayLimit}";
-                TxtOsBal.Text = $"OS Balance: {d.DisplayBalance}";
+                TxtCreditLimit.Text = $"Limit: {d.DisplayLimit}";
+                TxtOsBal.Text = $"Balance: {d.DisplayBalance}";
             }
             TxtBarcode.Focus();
         }
@@ -334,7 +362,7 @@ namespace FamilySupermarketPOS
             if (loginWin.ShowDialog() == true && loginWin.LoggedInUser != null)
             {
                 ConfigService.Current.CashierName = loginWin.LoggedInUser.FullName;
-                TxtCashier.Text = $"Cashier: {ConfigService.Current.CashierName}  |  Station: {ConfigService.Current.StationId}  |  Role: {loginWin.LoggedInUser.Role}";
+                TxtCashier.Text = $"Cashier: {ConfigService.Current.CashierName}  |  Station: {ConfigService.Current.StationId}";
                 System.Windows.MessageBox.Show($"Switched to user {loginWin.LoggedInUser.FullName} ({loginWin.LoggedInUser.Role}).", "User Switched");
             }
         }
@@ -477,7 +505,7 @@ namespace FamilySupermarketPOS
         private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.MessageBox.Show(
-                "Blue_Knight POS - Retail Terminal Edition\nVersion 1.0 (Windows 10/11 64-bit)\nBuilt with .NET 8 & WPF-UI Fluent Design\n\nOptimized for Supermarket & Wholesale Store Operations\nFull Parity with MiPOS Java Legacy System",
+                "Blue_Knight POS - Enterprise Retail Terminal Suite\nVersion 1.0 (Windows 10/11 64-bit)\nBuilt with .NET 8 & WPF-UI Fluent Design\n\nOptimized for Supermarket & Wholesale Store Operations\nFull Parity with MiPOS Java Legacy System",
                 "About Blue_Knight POS");
         }
     }
