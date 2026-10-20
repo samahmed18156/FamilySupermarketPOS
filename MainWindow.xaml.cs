@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using FamilySupermarketPOS.Services;
 using Wpf.Ui.Controls;
 
 namespace FamilySupermarketPOS
@@ -22,28 +22,26 @@ namespace FamilySupermarketPOS
 
     public partial class MainWindow : FluentWindow
     {
-        // 15% South African VAT
-        private const double VatRate = 0.15;
-
+        private const double VatRate = 0.15; // 15% South African VAT
         public ObservableCollection<CartItem> Cart { get; set; } = new();
-
-        // Sample stock catalog
-        private readonly Dictionary<string, (string Descr, double PriceIncl)> _stock = new()
-        {
-            { "1001", ("Full Cream Milk 2L", 32.99) },
-            { "1002", ("White Bread 700g", 18.50) },
-            { "1003", ("Sunflower Cooking Oil 2L", 79.99) },
-            { "1004", ("White Sugar 2.5kg", 54.00) },
-            { "1005", ("Coca Cola 2L", 26.99) },
-            { "1006", ("Large Eggs 30-Pack", 89.99) }
-        };
 
         public MainWindow()
         {
             InitializeComponent();
             DataGridCart.ItemsSource = Cart;
             TxtCurrentDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
-            Loaded += (s, e) => TxtBarcode.Focus();
+
+            Loaded += async (s, e) =>
+            {
+                TxtBarcode.Focus();
+                bool dbConnected = await DatabaseService.TestConnectionAsync();
+                if (!dbConnected)
+                {
+                    System.Windows.MessageBox.Show(
+                        "Note: Could not connect to local MySQL database.\nFalling back to demo item codes (1001, 1002, 1003).",
+                        "Database Notice");
+                }
+            };
 
             PreviewKeyDown += MainWindow_PreviewKeyDown;
         }
@@ -68,7 +66,7 @@ namespace FamilySupermarketPOS
             }
         }
 
-        private void TxtBarcode_KeyDown(object sender, KeyEventArgs e)
+        private async void TxtBarcode_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -80,31 +78,48 @@ namespace FamilySupermarketPOS
                     qty = 1;
                 }
 
-                if (_stock.TryGetValue(code, out var item))
+                // 1. Try fetching from MySQL database
+                var dbItem = await DatabaseService.GetProductByCodeOrBarcodeAsync(code);
+
+                string descr = "";
+                double priceIncl = 0;
+
+                if (dbItem != null)
                 {
-                    double totalIncl = Math.Round(item.PriceIncl * qty, 2);
-                    double priceExcl = Math.Round(item.PriceIncl / (1 + VatRate), 2);
-
-                    Cart.Add(new CartItem
-                    {
-                        Code = code,
-                        Description = item.Descr,
-                        Qty = qty,
-                        PriceExcl = priceExcl,
-                        TotalIncl = totalIncl
-                    });
-
-                    UpdateTotals();
-
-                    TxtBarcode.Clear();
-                    TxtQty.Text = "1";
-                    TxtBarcode.Focus();
+                    descr = dbItem.Description;
+                    priceIncl = dbItem.SellingPriceIncl;
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show($"Product with code '{code}' not found.\nTry: 1001, 1002, 1003, or 1004.");
-                    TxtBarcode.SelectAll();
+                    // Fallback local demo items if MySQL is offline
+                    if (code == "1001") { descr = "Full Cream Milk 2L"; priceIncl = 32.99; }
+                    else if (code == "1002") { descr = "White Bread 700g"; priceIncl = 18.50; }
+                    else if (code == "1003") { descr = "Sunflower Oil 2L"; priceIncl = 79.99; }
+                    else
+                    {
+                        System.Windows.MessageBox.Show($"Item code or barcode '{code}' not found.", "Not Found");
+                        TxtBarcode.SelectAll();
+                        return;
+                    }
                 }
+
+                double totalIncl = Math.Round(priceIncl * qty, 2);
+                double priceExcl = Math.Round(priceIncl / (1 + VatRate), 2);
+
+                Cart.Add(new CartItem
+                {
+                    Code = code,
+                    Description = descr,
+                    Qty = qty,
+                    PriceExcl = priceExcl,
+                    TotalIncl = totalIncl
+                });
+
+                UpdateTotals();
+
+                TxtBarcode.Clear();
+                TxtQty.Text = "1";
+                TxtBarcode.Focus();
             }
         }
 
@@ -117,19 +132,19 @@ namespace FamilySupermarketPOS
             TxtSubtotal.Text = $"Sub Total: R {subTotal:N2}";
             TxtVat.Text = $"VAT (15%): R {vat:N2}";
             TxtTotal.Text = $"R {grandTotal:N2}";
-            TxtItemsCount.Text = $"Items: {Cart.Sum(x => x.Qty)}";
+            TxtItemsCount.Text = $"Num Items: {Cart.Sum(x => x.Qty)}";
         }
 
         private void CompleteSale()
         {
             if (!Cart.Any())
             {
-                System.Windows.MessageBox.Show("Please scan at least one item first.");
+                System.Windows.MessageBox.Show("Please scan at least one item first.", "Empty Sale");
                 return;
             }
 
             double grandTotal = Cart.Sum(x => x.TotalIncl);
-            System.Windows.MessageBox.Show($"Sale Completed!\nTotal Tendered: R {grandTotal:N2}\n\n[Triggering Cash Drawer & Receipt Printer]");
+            System.Windows.MessageBox.Show($"Sale Completed!\nTotal Tendered: R {grandTotal:N2}\n\n[Triggering Cash Drawer & ESC/POS Printer]", "Sale Finished");
 
             Cart.Clear();
             UpdateTotals();
@@ -142,7 +157,19 @@ namespace FamilySupermarketPOS
 
         private void OpenSearch()
         {
-            System.Windows.MessageBox.Show("F3 Stock Lookup dialog will open here.");
+            System.Windows.MessageBox.Show("F3 Stock Lookup dialog will open here.", "Stock Lookup");
+        }
+
+        private void MenuExit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+
+        private void MenuSwitchUser_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Switch Cashier login dialog.", "Switch User");
+        }
+
+        private void MenuStockMaint_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Stock Maintenance window will open here.", "Stock Maintenance");
         }
     }
 }
