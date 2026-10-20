@@ -8,6 +8,7 @@ namespace FamilySupermarketPOS.Models
         public string Department { get; set; } = "";
         public double CostExcl { get; set; }
         public double SellingPriceIncl { get; set; }
+        public double SellingPriceExcl => System.Math.Round(SellingPriceIncl / 1.15, 2);
         public double Soh { get; set; }
 
         public string SellingPriceDisplay => $"R {SellingPriceIncl:N2}";

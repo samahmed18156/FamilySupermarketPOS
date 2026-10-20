@@ -1,0 +1,41 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.AgeAnalysisWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Debtors Age Analysis &amp; Statements - Blue_Knight POS" Height="680" Width="1050"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Title -->
+            <RowDefinition Height="*"/>    <!-- Grid -->
+            <RowDefinition Height="Auto"/> <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="DEBTORS AGE ANALYSIS (30 / 60 / 90 / 120 DAYS)" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="Aged credit balances for wholesale accounts matching MiPOS DebtorsAgeAnalysis." FontSize="12" Foreground="Gray"/>
+            </StackPanel>
+            <ui:Button Content="Print Age Analysis Report" Appearance="Primary" HorizontalAlignment="Right" Click="BtnPrint_Click"/>
+        </Grid>
+
+        <ui:DataGrid Grid.Row="1" x:Name="GridAging" AutoGenerateColumns="False" CanUserAddRows="False" FontSize="13">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="Acc #" Binding="{Binding AccountNumber}" Width="120"/>
+                <DataGridTextColumn Header="Customer Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Current (R)" Binding="{Binding DisplayCurrent}" Width="120"/>
+                <DataGridTextColumn Header="30 Days (R)" Binding="{Binding Display30}" Width="120"/>
+                <DataGridTextColumn Header="60 Days (R)" Binding="{Binding Display60}" Width="120"/>
+                <DataGridTextColumn Header="90+ Days (R)" Binding="{Binding Display90Plus}" Width="120"/>
+                <DataGridTextColumn Header="Total Due" Binding="{Binding DisplayTotal}" Width="130"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <ui:Button Content="Close" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnClose_Click"/>
+            <TextBlock x:Name="TxtTotalOutstanding" Text="Total Outstanding: R 0.00" HorizontalAlignment="Right" 
+                       VerticalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="#0078D4"/>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

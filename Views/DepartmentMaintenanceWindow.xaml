@@ -1,0 +1,49 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.DepartmentMaintenanceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Department Maintenance - Blue_Knight POS" Height="580" Width="700"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="SUPERMARKET DEPARTMENTS" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <ui:DataGrid Grid.Row="1" x:Name="GridDepts" AutoGenerateColumns="False" CanUserAddRows="False" 
+                     SelectionMode="Single" FontSize="14" SelectionChanged="GridDepts_SelectionChanged">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="Dept Code" Binding="{Binding Code}" Width="160"/>
+                <DataGridTextColumn Header="Department Name" Binding="{Binding Name}" Width="*"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <ui:Card Grid.Row="2" Margin="0,12,0,0" Padding="12">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Dept Code:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="0" x:Name="TxtCode" Margin="0,0,8,0"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Department Name:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtName" Margin="0,0,8,0"/>
+
+                <ui:Button Grid.Row="1" Grid.Column="2" Content="Save Dept" Appearance="Primary" Margin="0,0,8,0" Click="BtnSave_Click"/>
+                <ui:Button Grid.Row="1" Grid.Column="3" Content="Delete" Appearance="Danger" Click="BtnDelete_Click"/>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>

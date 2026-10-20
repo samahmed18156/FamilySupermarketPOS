@@ -1,0 +1,58 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Cashier Login - Blue_Knight POS" Height="460" Width="480"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Title -->
+            <RowDefinition Height="*"/>    <!-- Form -->
+            <RowDefinition Height="Auto"/> <!-- Quick logins -->
+            <RowDefinition Height="Auto"/> <!-- Buttons -->
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16" HorizontalAlignment="Center">
+            <ui:SymbolIcon Symbol="PersonLock24" FontSize="36" Foreground="#0078D4" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+            <TextBlock Text="BLUE_KNIGHT POS LOGIN" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <TextBlock Text="Enter Cashier or Manager credentials to unlock." FontSize="12" Foreground="Gray" HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <ui:Card Grid.Row="1" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="User ID:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <ui:TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtUserId" Margin="0,0,0,12" Text="CASH1" FontSize="15" KeyDown="Txt_KeyDown"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Password:" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="TxtPassword" Height="38" FontSize="15" 
+                             Background="#2A2A2A" Foreground="White" BorderBrush="#444" BorderThickness="1" 
+                             Padding="6" KeyDown="Password_KeyDown"/>
+            </Grid>
+        </ui:Card>
+
+        <StackPanel Grid.Row="2" Margin="0,12,0,12">
+            <TextBlock Text="Fast Select Demo User:" FontSize="11" Foreground="Gray" Margin="0,0,0,4"/>
+            <UniformGrid Columns="3">
+                <ui:Button Content="Cashier (CASH1)" Margin="0,0,4,0" Tag="CASH1:1" Click="QuickLogin_Click"/>
+                <ui:Button Content="Manager (MAN)" Margin="2,0,2,0" Tag="MAN:123" Click="QuickLogin_Click"/>
+                <ui:Button Content="Admin (adm)" Margin="4,0,0,0" Tag="adm:n" Click="QuickLogin_Click"/>
+            </UniformGrid>
+        </StackPanel>
+
+        <Grid Grid.Row="3">
+            <ui:Button Content="Cancel" Appearance="Secondary" Height="40" Padding="20,0" Click="BtnCancel_Click"/>
+            <ui:Button Content="Log In (Enter)" Appearance="Primary" Height="40" Padding="25,0" 
+                       HorizontalAlignment="Right" FontWeight="Bold" Click="BtnLogin_Click"/>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>

@@ -1,0 +1,61 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.CreditorMaintenanceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Creditor / Supplier Maintenance - Blue_Knight POS" Height="680" Width="950"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="SUPPLIERS &amp; CREDITORS" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <ui:DataGrid Grid.Row="1" x:Name="GridCreditors" AutoGenerateColumns="False" CanUserAddRows="False" 
+                     SelectionMode="Single" FontSize="13" SelectionChanged="GridCreditors_SelectionChanged">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="Supplier Code" Binding="{Binding Code}" Width="130"/>
+                <DataGridTextColumn Header="Supplier Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="Telephone" Binding="{Binding Telephone}" Width="140"/>
+                <DataGridTextColumn Header="Address / City" Binding="{Binding Address}" Width="160"/>
+                <DataGridTextColumn Header="Terms" Binding="{Binding Terms}" Width="100"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <ui:Card Grid.Row="2" Margin="0,12,0,0" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Supplier Code:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="0" x:Name="TxtCode" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="Supplier Name:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtName" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Telephone:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="2" x:Name="TxtPhone" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="Terms:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="3" x:Name="TxtTerms" Text="30 Days" Margin="0,0,0,10"/>
+
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ui:Button Content="+ New Supplier" Appearance="Secondary" Margin="0,0,8,0" Click="BtnNew_Click"/>
+                    <ui:Button Content="Save Supplier" Appearance="Primary" Padding="25,0" Height="36" Click="BtnSave_Click"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>

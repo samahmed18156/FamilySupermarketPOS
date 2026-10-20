@@ -1,0 +1,70 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.UserMaintenanceWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="User &amp; Cashier Maintenance - Blue_Knight POS" Height="680" Width="850"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Title -->
+            <RowDefinition Height="*"/>    <!-- Users Grid -->
+            <RowDefinition Height="Auto"/> <!-- Form -->
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="CASHIER &amp; MANAGER ACCOUNTS" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <ui:DataGrid Grid.Row="1" x:Name="GridUsers" AutoGenerateColumns="False" CanUserAddRows="False" 
+                     SelectionMode="Single" FontSize="13" SelectionChanged="GridUsers_SelectionChanged">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="User ID" Binding="{Binding Id}" Width="120"/>
+                <DataGridTextColumn Header="First Name" Binding="{Binding Name}" Width="160"/>
+                <DataGridTextColumn Header="Surname" Binding="{Binding Surname}" Width="160"/>
+                <DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="130"/>
+                <DataGridCheckBoxColumn Header="Can Discount" Binding="{Binding CanDiscount}" Width="120"/>
+                <DataGridCheckBoxColumn Header="Can Delete" Binding="{Binding CanDelete}" Width="120"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <ui:Card Grid.Row="2" Margin="0,12,0,0" Padding="14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="130"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="User ID / Login:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="0" x:Name="TxtId" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="First Name:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtFirstName" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Surname:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="2" x:Name="TxtSurname" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="Password / PIN:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ui:TextBox Grid.Row="1" Grid.Column="3" x:Name="TxtPass" Margin="0,0,8,10"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Role:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                <ComboBox Grid.Row="1" Grid.Column="4" x:Name="CmbRole" Margin="0,0,0,10" Height="36" FontSize="13">
+                    <ComboBoxItem Content="Cashier" IsSelected="True"/>
+                    <ComboBoxItem Content="Manager"/>
+                    <ComboBoxItem Content="Admin"/>
+                </ComboBox>
+
+                <StackPanel Grid.Row="2" Grid.ColumnSpan="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ui:Button Content="+ New User" Appearance="Secondary" Margin="0,0,8,0" Click="BtnNew_Click"/>
+                    <ui:Button Content="Save User Account" Appearance="Primary" Padding="25,0" Height="36" Click="BtnSave_Click"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>

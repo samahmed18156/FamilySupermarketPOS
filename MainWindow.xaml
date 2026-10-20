@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        Title="Blue_Knight POS - Retail Terminal" Height="820" Width="1220"
+        Title="Blue_Knight POS - Complete Retail &amp; Supermarket Suite" Height="820" Width="1240"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -10,56 +10,61 @@
             <RowDefinition Height="Auto"/> <!-- 0. Menu Bar -->
             <RowDefinition Height="Auto"/> <!-- 1. Store & Cashier Header -->
             <RowDefinition Height="Auto"/> <!-- 2. Customer / Account Strip -->
-            <RowDefinition Height="Auto"/> <!-- 3. Barcode & Qty Entry -->
+            <RowDefinition Height="Auto"/> <!-- 3. Barcode & Action Strip -->
             <RowDefinition Height="*"/>    <!-- 4. Scanned Items Table -->
             <RowDefinition Height="Auto"/> <!-- 5. Financial Totals & Checkout -->
             <RowDefinition Height="Auto"/> <!-- 6. Keyboard Shortcuts Footer -->
         </Grid.RowDefinitions>
 
-        <!-- 0. Top Menu Bar (Matches Full MiPOS Structure) -->
-        <Menu Grid.Row="0" Background="#1E1E1E" Foreground="White" FontSize="13">
+        <!-- 0. Top Menu Bar (Full MiPOS Structure A to Z) -->
+        <Menu Grid.Row="0" Background="#1A1A1A" Foreground="White" FontSize="13">
             <MenuItem Header="_File">
-                <MenuItem Header="Switch Cashier" Click="MenuSwitchUser_Click"/>
-                <MenuItem Header="Lock Terminal"/>
+                <MenuItem Header="Switch Cashier (Login)" Click="MenuSwitchUser_Click"/>
+                <MenuItem Header="Lock POS Terminal" Click="MenuLock_Click"/>
                 <Separator/>
                 <MenuItem Header="E_xit" Click="MenuExit_Click"/>
             </MenuItem>
             <MenuItem Header="_Stock">
                 <MenuItem Header="Stock Maintenance" Click="MenuStockMaint_Click"/>
+                <MenuItem Header="Department Maintenance" Click="MenuDeptMaint_Click"/>
                 <MenuItem Header="Stock Adjustments (Debit/Credit)" Click="MenuStockAdj_Click"/>
-                <MenuItem Header="Department Maintenance"/>
-                <MenuItem Header="Stock Take Process"/>
+                <MenuItem Header="Stock Take &amp; Audit Process" Click="MenuStockTake_Click"/>
                 <Separator/>
+                <MenuItem Header="Print Barcode &amp; Shelf Labels" Click="MenuShelfLabels_Click"/>
                 <MenuItem Header="Zero SOH (Zero Stock on Hand) Report" Click="MenuReports_Click"/>
                 <MenuItem Header="Stock Valuation Report" Click="MenuReports_Click"/>
             </MenuItem>
             <MenuItem Header="_Creditors">
                 <MenuItem Header="Goods Received Note (GRN)" Click="MenuGrn_Click"/>
-                <MenuItem Header="Creditors Maintenance"/>
-                <MenuItem Header="Creditor Purchase Orders"/>
-                <MenuItem Header="Creditor Transactions"/>
+                <MenuItem Header="Creditors Maintenance (Suppliers)" Click="MenuCreditorMaint_Click"/>
+                <MenuItem Header="Supplier Purchase Orders"/>
+                <MenuItem Header="Creditor Transactions &amp; Audit"/>
             </MenuItem>
             <MenuItem Header="_Debtors">
                 <MenuItem Header="Customer Account Lookup (Ctrl+A)" Click="MenuDebtors_Click"/>
+                <MenuItem Header="Debtors Maintenance" Click="MenuDebtorMaint_Click"/>
                 <MenuItem Header="Laybye Maintenance" Click="MenuLaybye_Click"/>
-                <MenuItem Header="Debtors Statements &amp; Age Analysis"/>
+                <MenuItem Header="Formal Quotations" Click="MenuQuotes_Click"/>
+                <MenuItem Header="Debtors Statements &amp; Age Analysis" Click="MenuAgeAnalysis_Click"/>
             </MenuItem>
             <MenuItem Header="_Utility">
                 <MenuItem Header="Cash Up Reconciliation" Click="MenuCashUp_Click"/>
                 <MenuItem Header="Petty Cash Vouchers" Click="MenuPettyCash_Click"/>
                 <MenuItem Header="Day End Process" Click="MenuDayEnd_Click"/>
+                <MenuItem Header="Month End Process" Click="MenuMonthEnd_Click"/>
                 <Separator/>
+                <MenuItem Header="User &amp; Cashier Maintenance" Click="MenuUserMaint_Click"/>
+                <MenuItem Header="Company &amp; Store Details" Click="MenuCompanyDetails_Click"/>
                 <MenuItem Header="MySQL Database Configuration" Click="MenuDatabaseConfig_Click"/>
-                <MenuItem Header="Hardware &amp; Printer Settings" Click="MenuDatabaseConfig_Click"/>
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="Quick Reprint Last Receipt (F10)" Click="MenuReprint_Click"/>
+                <MenuItem Header="Quick Reprint Last Slip (F10)" Click="MenuReprint_Click"/>
                 <MenuItem Header="About Blue_Knight POS" Click="MenuAbout_Click"/>
             </MenuItem>
         </Menu>
 
-        <!-- 1. Store Header & Date -->
-        <Grid Grid.Row="1" Margin="20,12,20,10">
+        <!-- 1. Store Header & Cashier Status -->
+        <Grid Grid.Row="1" Margin="20,10,20,10">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <ui:SymbolIcon Symbol="Shield24" FontSize="28" Margin="0,0,12,0" Foreground="#0078D4"/>
                 <StackPanel>
@@ -67,11 +72,16 @@
                     <TextBlock x:Name="TxtCashier" Text="Cashier: ZAMAN MP  |  Station: M1  |  Mode: Retail POS" FontSize="12" Foreground="Gray"/>
                 </StackPanel>
             </StackPanel>
-            <TextBlock x:Name="TxtCurrentDate" HorizontalAlignment="Right" VerticalAlignment="Center" 
-                       FontSize="15" FontWeight="SemiBold" Foreground="#888888"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Border x:Name="BadgeReturnMode" Background="#D83B01" CornerRadius="4" Padding="8,4" Margin="0,0,15,0" Visibility="Collapsed">
+                    <TextBlock Text="⚠ RETURNS &amp; CREDIT NOTE MODE ACTIVE" FontWeight="Bold" FontSize="12" Foreground="White"/>
+                </Border>
+                <TextBlock x:Name="TxtCurrentDate" FontSize="15" FontWeight="SemiBold" Foreground="#888888"/>
+            </StackPanel>
         </Grid>
 
-        <!-- 2. Customer / Account Strip (Matches MiPOS Num: CASH, Name: Cash Sale) -->
+        <!-- 2. Customer / Account Strip (Matches MiPOS CASH / Account) -->
         <ui:Card Grid.Row="2" Margin="20,0,20,10" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -100,12 +110,15 @@
             </Grid>
         </ui:Card>
 
-        <!-- 3. Barcode & Qty Entry Card -->
+        <!-- 3. Barcode Entry & Action Toolbar -->
         <ui:Card Grid.Row="3" Margin="20,0,20,10" Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
@@ -114,11 +127,20 @@
                             FontSize="16" Icon="{ui:SymbolIcon Symbol=BarcodeScanner24}"
                             KeyDown="TxtBarcode_KeyDown"/>
 
-                <ui:TextBox x:Name="TxtQty" Grid.Column="1" Margin="10,0,0,0" 
+                <ui:TextBox x:Name="TxtQty" Grid.Column="1" Margin="8,0,0,0" 
                             Text="1" TextAlignment="Center" FontSize="16"/>
 
-                <ui:Button Grid.Column="2" Content="F3 - Lookup Item" Margin="10,0,0,0" 
+                <ui:Button Grid.Column="2" Content="F3 - Lookup" Margin="8,0,0,0" 
                            Icon="{ui:SymbolIcon Symbol=Search24}" Click="BtnSearch_Click"/>
+
+                <ui:Button Grid.Column="3" Content="F5 - Discount" Margin="6,0,0,0" 
+                           Appearance="Secondary" Click="BtnDiscount_Click"/>
+
+                <ui:Button Grid.Column="4" Content="F6 - Price" Margin="6,0,0,0" 
+                           Appearance="Secondary" Click="BtnPriceOverride_Click"/>
+
+                <ui:Button x:Name="BtnToggleReturn" Grid.Column="5" Content="F8 - Return" Margin="6,0,0,0" 
+                           Appearance="Secondary" Click="BtnToggleReturn_Click"/>
             </Grid>
         </ui:Card>
 
@@ -126,11 +148,12 @@
         <ui:DataGrid Grid.Row="4" x:Name="DataGridCart" Margin="20,0,20,0"
                      AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single" FontSize="14">
             <ui:DataGrid.Columns>
-                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="150"/>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="140"/>
                 <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                <DataGridTextColumn Header="Qty" Binding="{Binding Qty}" Width="80"/>
-                <DataGridTextColumn Header="Price (Excl)" Binding="{Binding PriceExclDisplay}" Width="140"/>
-                <DataGridTextColumn Header="Value (Incl)" Binding="{Binding TotalInclDisplay}" Width="150"/>
+                <DataGridTextColumn Header="Qty" Binding="{Binding QtyDisplay}" Width="120"/>
+                <DataGridTextColumn Header="Unit Price" Binding="{Binding PriceExclDisplay}" Width="130"/>
+                <DataGridTextColumn Header="Disc" Binding="{Binding DiscountDisplay}" Width="90"/>
+                <DataGridTextColumn Header="Value (Incl)" Binding="{Binding TotalInclDisplay}" Width="140"/>
             </ui:DataGrid.Columns>
         </ui:DataGrid>
 
@@ -152,7 +175,7 @@
                     <TextBlock Text="TOTAL: " FontSize="30" FontWeight="Bold" VerticalAlignment="Center"/>
                     <TextBlock x:Name="TxtTotal" Text="R 0.00" FontSize="36" FontWeight="Bold" 
                                Foreground="#0078D4" VerticalAlignment="Center" Margin="10,0,25,0"/>
-                    <ui:Button Content="F12 - Done (Tender)" Appearance="Primary" 
+                    <ui:Button x:Name="BtnCheckout" Content="F12 - Done (Tender)" Appearance="Primary" 
                                FontSize="16" FontWeight="SemiBold" Padding="25,12" 
                                Click="BtnCompleteSale_Click"/>
                 </StackPanel>
@@ -160,9 +183,9 @@
         </ui:Card>
 
         <!-- 6. Bottom Shortcuts Bar -->
-        <StatusBar Grid.Row="6" Margin="20,8,20,8" Background="Transparent">
+        <StatusBar Grid.Row="6" Margin="20,6,20,6" Background="Transparent">
             <StatusBarItem>
-                <TextBlock Text="[Enter] Add Line  |  [F3] Lookup  |  [Ctrl+A] Customer Account  |  [F10] Reprint Slip  |  [Del] Remove Line  |  [F12] Done" 
+                <TextBlock Text="[Enter] Scan  |  [F3] Lookup  |  [F5] Disc  |  [F6] Price  |  [F8] Return  |  [F10] Reprint  |  [Ctrl+A] Acc  |  [Del] Remove  |  [F12] Done" 
                            FontSize="12" Foreground="Gray"/>
             </StatusBarItem>
         </StatusBar>
