@@ -231,6 +231,36 @@ namespace FamilySupermarketPOS
             maintWin.ShowDialog();
         }
 
+        private void MenuStockAdj_Click(object sender, RoutedEventArgs e)
+        {
+            var adjWin = new StockAdjustmentWindow { Owner = this };
+            adjWin.ShowDialog();
+        }
+
+        private void MenuGrn_Click(object sender, RoutedEventArgs e)
+        {
+            var grnWin = new GrnWindow { Owner = this };
+            grnWin.ShowDialog();
+        }
+
+        private void MenuLaybye_Click(object sender, RoutedEventArgs e)
+        {
+            var laybyeWin = new LaybyeWindow { Owner = this };
+            laybyeWin.ShowDialog();
+        }
+
+        private void MenuPettyCash_Click(object sender, RoutedEventArgs e)
+        {
+            var pcWin = new PettyCashWindow { Owner = this };
+            pcWin.ShowDialog();
+        }
+
+        private void MenuReports_Click(object sender, RoutedEventArgs e)
+        {
+            var repWin = new ReportsWindow { Owner = this };
+            repWin.ShowDialog();
+        }
+
         private void MenuDebtors_Click(object sender, RoutedEventArgs e) => OpenDebtorLookup();
 
         private void MenuCashUp_Click(object sender, RoutedEventArgs e)
@@ -257,7 +287,7 @@ namespace FamilySupermarketPOS
         private void MenuAbout_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.MessageBox.Show(
-                "Blue_Knight POS - Retail Terminal Edition\nVersion 1.0 (Windows 10/11 64-bit)\nBuilt with .NET 8 & WPF-UI Fluent Design\n\nOptimized for Family Supermarket / Retail Store Operations",
+                "Blue_Knight POS - Retail Terminal Edition\nVersion 1.0 (Windows 10/11 64-bit)\nBuilt with .NET 8 & WPF-UI Fluent Design\n\nOptimized for Supermarket & Wholesale Store Operations",
                 "About Blue_Knight POS");
         }
     }

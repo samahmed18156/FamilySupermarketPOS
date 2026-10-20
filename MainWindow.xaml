@@ -7,7 +7,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- 0. Classic MiPOS Menu Bar -->
+            <RowDefinition Height="Auto"/> <!-- 0. Menu Bar -->
             <RowDefinition Height="Auto"/> <!-- 1. Store & Cashier Header -->
             <RowDefinition Height="Auto"/> <!-- 2. Customer / Account Strip -->
             <RowDefinition Height="Auto"/> <!-- 3. Barcode & Qty Entry -->
@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/> <!-- 6. Keyboard Shortcuts Footer -->
         </Grid.RowDefinitions>
 
-        <!-- 0. Top Menu Bar -->
+        <!-- 0. Top Menu Bar (Matches Full MiPOS Structure) -->
         <Menu Grid.Row="0" Background="#1E1E1E" Foreground="White" FontSize="13">
             <MenuItem Header="_File">
                 <MenuItem Header="Switch Cashier" Click="MenuSwitchUser_Click"/>
@@ -26,34 +26,31 @@
             </MenuItem>
             <MenuItem Header="_Stock">
                 <MenuItem Header="Stock Maintenance" Click="MenuStockMaint_Click"/>
+                <MenuItem Header="Stock Adjustments (Debit/Credit)" Click="MenuStockAdj_Click"/>
                 <MenuItem Header="Department Maintenance"/>
-                <MenuItem Header="Stock Adjustments (Debit/Credit)"/>
                 <MenuItem Header="Stock Take Process"/>
                 <Separator/>
-                <MenuItem Header="Print Barcodes &amp; Shelf Labels"/>
-                <MenuItem Header="Zero SOH (Stock on Hand) Report"/>
+                <MenuItem Header="Zero SOH (Zero Stock on Hand) Report" Click="MenuReports_Click"/>
+                <MenuItem Header="Stock Valuation Report" Click="MenuReports_Click"/>
             </MenuItem>
             <MenuItem Header="_Creditors">
+                <MenuItem Header="Goods Received Note (GRN)" Click="MenuGrn_Click"/>
                 <MenuItem Header="Creditors Maintenance"/>
-                <MenuItem Header="Goods Received Note (GRN)"/>
                 <MenuItem Header="Creditor Purchase Orders"/>
                 <MenuItem Header="Creditor Transactions"/>
             </MenuItem>
             <MenuItem Header="_Debtors">
                 <MenuItem Header="Customer Account Lookup (Ctrl+A)" Click="MenuDebtors_Click"/>
-                <MenuItem Header="Debtors Maintenance"/>
-                <MenuItem Header="Laybye Maintenance"/>
-                <MenuItem Header="Quotations"/>
+                <MenuItem Header="Laybye Maintenance" Click="MenuLaybye_Click"/>
                 <MenuItem Header="Debtors Statements &amp; Age Analysis"/>
             </MenuItem>
             <MenuItem Header="_Utility">
                 <MenuItem Header="Cash Up Reconciliation" Click="MenuCashUp_Click"/>
+                <MenuItem Header="Petty Cash Vouchers" Click="MenuPettyCash_Click"/>
                 <MenuItem Header="Day End Process" Click="MenuDayEnd_Click"/>
-                <MenuItem Header="Month End Process"/>
                 <Separator/>
                 <MenuItem Header="MySQL Database Configuration" Click="MenuDatabaseConfig_Click"/>
                 <MenuItem Header="Hardware &amp; Printer Settings" Click="MenuDatabaseConfig_Click"/>
-                <MenuItem Header="Company Details"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="Quick Reprint Last Receipt (F10)" Click="MenuReprint_Click"/>
@@ -165,7 +162,7 @@
         <!-- 6. Bottom Shortcuts Bar -->
         <StatusBar Grid.Row="6" Margin="20,8,20,8" Background="Transparent">
             <StatusBarItem>
-                <TextBlock Text="[Enter] Add Line  |  [F3] Lookup Item  |  [Ctrl+A] Customer Account  |  [F10] Reprint Slip  |  [Del] Remove Line  |  [F12] Done" 
+                <TextBlock Text="[Enter] Add Line  |  [F3] Lookup  |  [Ctrl+A] Customer Account  |  [F10] Reprint Slip  |  [Del] Remove Line  |  [F12] Done" 
                            FontSize="12" Foreground="Gray"/>
             </StatusBarItem>
         </StatusBar>

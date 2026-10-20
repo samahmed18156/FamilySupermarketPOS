@@ -1,0 +1,60 @@
+<ui:FluentWindow x:Class="FamilySupermarketPOS.Views.LaybyeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        Title="Customer Laybye Maintenance - Blue_Knight POS" Height="680" Width="1000"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid Margin="18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Title & Filter -->
+            <RowDefinition Height="*"/>    <!-- Laybyes DataGrid -->
+            <RowDefinition Height="Auto"/> <!-- Actions / Payment -->
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,12">
+            <StackPanel>
+                <TextBlock Text="CUSTOMER LAYBYE SYSTEM" FontSize="18" FontWeight="Bold"/>
+                <TextBlock Text="Track customer reservations, deposits, installment payments, and release goods." FontSize="12" Foreground="Gray"/>
+            </StackPanel>
+            <ui:Button Content="+ Create New Laybye" Appearance="Primary" HorizontalAlignment="Right" Click="BtnNewLaybye_Click"/>
+        </Grid>
+
+        <!-- Grid -->
+        <ui:DataGrid Grid.Row="1" x:Name="GridLaybyes" AutoGenerateColumns="False" CanUserAddRows="False" 
+                     SelectionMode="Single" FontSize="14" SelectionChanged="GridLaybyes_SelectionChanged">
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn Header="Laybye #" Binding="{Binding LaybyeNo}" Width="120"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding DisplayDate}" Width="110"/>
+                <DataGridTextColumn Header="Customer Name" Binding="{Binding CustomerName}" Width="180"/>
+                <DataGridTextColumn Header="Phone" Binding="{Binding CustomerPhone}" Width="140"/>
+                <DataGridTextColumn Header="Items" Binding="{Binding ItemsSummary}" Width="*"/>
+                <DataGridTextColumn Header="Total" Binding="{Binding DisplayTotal}" Width="110"/>
+                <DataGridTextColumn Header="Paid" Binding="{Binding DisplayPaid}" Width="110"/>
+                <DataGridTextColumn Header="Balance" Binding="{Binding DisplayBalance}" Width="120"/>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
+
+        <!-- Actions -->
+        <ui:Card Grid.Row="2" Margin="0,12,0,0" Padding="14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Take Installment (R):" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                    <ui:TextBox x:Name="TxtPaymentAmount" Width="130" Text="100.00" TextAlignment="Right"/>
+                    <ui:Button Content="Process Payment" Appearance="Primary" Margin="10,0,0,0" Click="BtnPayInstallment_Click"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ui:Button Content="Close" Appearance="Secondary" Margin="0,0,10,0" Click="BtnClose_Click"/>
+                    <ui:Button x:Name="BtnRelease" Content="Release Goods to Customer" Appearance="Success" Click="BtnRelease_Click"/>
+                </StackPanel>
+            </Grid>
+        </ui:Card>
+    </Grid>
+</ui:FluentWindow>
