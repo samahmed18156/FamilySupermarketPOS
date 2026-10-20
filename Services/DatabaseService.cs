@@ -9,11 +9,9 @@ namespace FamilySupermarketPOS.Services
 {
     public class DatabaseService
     {
-        // Default local MySQL credentials for MiPOS store database
-        public static string ConnectionString { get; set; } = 
-            "Server=localhost;Database=store;User ID=root;Password=;Port=3306;AllowUserVariables=True;";
+        public static string ConnectionString => ConfigService.Current.ToConnectionString();
 
-        // Built-in demo items if MySQL server is not currently running
+        // Built-in demo products if MySQL server is not currently reachable
         private static readonly List<Product> DemoProducts = new()
         {
             new Product { Code = "1001", Barcode = "6001001001001", Description = "Full Cream Milk 2L", Department = "DAIRY", CostExcl = 26.50, SellingPriceIncl = 32.99, Soh = 48 },
@@ -26,11 +24,20 @@ namespace FamilySupermarketPOS.Services
             new Product { Code = "1008", Barcode = "6001008008008", Description = "Maize Meal 5kg", Department = "GROCERY", CostExcl = 52.00, SellingPriceIncl = 64.99, Soh = 30 }
         };
 
-        public static async Task<bool> TestConnectionAsync()
+        // Built-in demo debtors
+        private static readonly List<Debtor> DemoDebtors = new()
+        {
+            new Debtor { AccountNumber = "CASH", Name = "Cash Sale", Telephone = "-", CreditLimit = 0, OutstandingBalance = 0 },
+            new Debtor { AccountNumber = "ACC001", Name = "Ahmed Family Store", Telephone = "082 123 4567", CreditLimit = 15000, OutstandingBalance = 2450.00 },
+            new Debtor { AccountNumber = "ACC002", Name = "Zaman Enterprises", Telephone = "071 987 6543", CreditLimit = 25000, OutstandingBalance = 8750.50 },
+            new Debtor { AccountNumber = "ACC003", Name = "Retreat Wholesale", Telephone = "021 701 0000", CreditLimit = 50000, OutstandingBalance = 14200.00 }
+        };
+
+        public static async Task<bool> TestConnectionAsync(string? testConnStr = null)
         {
             try
             {
-                using var conn = new MySqlConnection(ConnectionString);
+                using var conn = new MySqlConnection(testConnStr ?? ConnectionString);
                 await conn.OpenAsync();
                 return conn.State == ConnectionState.Open;
             }
@@ -77,7 +84,6 @@ namespace FamilySupermarketPOS.Services
                 // Fall back to demo items
             }
 
-            // Fallback demo search
             return DemoProducts.Find(p => p.Code.Equals(code, StringComparison.OrdinalIgnoreCase) || 
                                           p.Barcode.Equals(code, StringComparison.OrdinalIgnoreCase));
         }
@@ -119,10 +125,9 @@ namespace FamilySupermarketPOS.Services
             }
             catch
             {
-                // Fall back to demo items
+                // Fall back
             }
 
-            // Fallback demo search
             string term = searchTerm.ToLowerInvariant();
             return DemoProducts.FindAll(p => p.Code.ToLowerInvariant().Contains(term) || 
                                              p.Description.ToLowerInvariant().Contains(term) ||
@@ -138,20 +143,12 @@ namespace FamilySupermarketPOS.Services
 
                 string barcodeFormatted = string.IsNullOrEmpty(item.Barcode) ? "NONE" : $"|{item.Barcode}|";
 
-                string sql;
-                if (isNew)
-                {
-                    sql = @"
-                        INSERT INTO stockt2 (code, descr, dept, cpe, sp1, soh, skunum) 
-                        VALUES (@code, @descr, @dept, @cpe, @sp1, @soh, @skunum);";
-                }
-                else
-                {
-                    sql = @"
-                        UPDATE stockt2 
+                string sql = isNew
+                    ? @"INSERT INTO stockt2 (code, descr, dept, cpe, sp1, soh, skunum) 
+                        VALUES (@code, @descr, @dept, @cpe, @sp1, @soh, @skunum);"
+                    : @"UPDATE stockt2 
                         SET descr = @descr, dept = @dept, cpe = @cpe, sp1 = @sp1, soh = @soh, skunum = @skunum 
                         WHERE code = @code;";
-                }
 
                 using var cmd = new MySqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@code", item.Code);
@@ -165,15 +162,55 @@ namespace FamilySupermarketPOS.Services
                 await cmd.ExecuteNonQueryAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine($"SaveStock error: {ex.Message}");
-                // Also update local demo list
                 int idx = DemoProducts.FindIndex(p => p.Code.Equals(item.Code, StringComparison.OrdinalIgnoreCase));
                 if (idx >= 0) DemoProducts[idx] = item;
                 else DemoProducts.Add(item);
                 return true;
             }
+        }
+
+        public static async Task<List<Debtor>> SearchDebtorsAsync(string query)
+        {
+            var list = new List<Debtor>();
+            try
+            {
+                using var conn = new MySqlConnection(ConnectionString);
+                await conn.OpenAsync();
+
+                string sql = @"
+                    SELECT accnum, name, tel1, crlimit, osbal 
+                    FROM m1debtors 
+                    WHERE accnum LIKE @term OR name LIKE @term 
+                    ORDER BY name ASC 
+                    LIMIT 30;";
+
+                using var cmd = new MySqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@term", $"%{query}%");
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    list.Add(new Debtor
+                    {
+                        AccountNumber = reader["accnum"].ToString() ?? "",
+                        Name = reader["name"].ToString() ?? "",
+                        Telephone = reader["tel1"].ToString() ?? "",
+                        CreditLimit = Convert.ToDouble(reader["crlimit"] == DBNull.Value ? 0 : reader["crlimit"]),
+                        OutstandingBalance = Convert.ToDouble(reader["osbal"] == DBNull.Value ? 0 : reader["osbal"])
+                    });
+                }
+                if (list.Count > 0) return list;
+            }
+            catch
+            {
+                // Fall back to demo list
+            }
+
+            string term = query.ToLowerInvariant();
+            return DemoDebtors.FindAll(d => d.AccountNumber.ToLowerInvariant().Contains(term) || 
+                                           d.Name.ToLowerInvariant().Contains(term));
         }
 
         public static async Task<bool> RecordSaleTransactionAsync(string invoiceNo, List<CartItem> items, string paymentMethod)
@@ -185,7 +222,6 @@ namespace FamilySupermarketPOS.Services
 
                 foreach (var item in items)
                 {
-                    // Deduct stock on hand
                     string updateSoh = "UPDATE stockt2 SET soh = soh - @qty WHERE code = @code;";
                     using (var cmd = new MySqlCommand(updateSoh, conn))
                     {
@@ -194,7 +230,6 @@ namespace FamilySupermarketPOS.Services
                         await cmd.ExecuteNonQueryAsync();
                     }
 
-                    // Insert sales transaction into m1sttrans if it exists
                     string insertTrans = @"
                         INSERT INTO m1sttrans (date, code, qty, transtype, docno, sp, vat) 
                         VALUES (NOW(), @code, @qty * -1, '0', @docno, @sp, @vat);";
@@ -210,7 +245,7 @@ namespace FamilySupermarketPOS.Services
                     }
                     catch
                     {
-                        // Ignore if table doesn't match exactly yet
+                        // Ignore if table differences exist
                     }
                 }
                 return true;

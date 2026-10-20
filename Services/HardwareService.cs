@@ -9,10 +9,12 @@ namespace FamilySupermarketPOS.Services
     public class HardwareService
     {
         private static int _invoiceCounter = 10001;
+        public static string LastReceiptText { get; private set; } = "";
+        public static string LastInvoiceNumber { get; private set; } = "";
 
         public static string GenerateNextInvoiceNumber()
         {
-            return $"INV-{_invoiceCounter++}";
+            return $"BK-{_invoiceCounter++}";
         }
 
         public static string GenerateReceiptSlip(
@@ -22,23 +24,23 @@ namespace FamilySupermarketPOS.Services
             double tendered, 
             double change, 
             string paymentMethod, 
-            string cashierName)
+            string cashierName,
+            string accountName = "CASH (Cash Sale)")
         {
             var sb = new StringBuilder();
-            const int width = 42; // standard 80mm printer character width
+            const int width = 42;
 
             sb.AppendLine("".PadRight(width, '='));
-            sb.AppendLine(CenterText("AHF PROPERTIES", width));
-            sb.AppendLine(CenterText("T/A FAMILY SUPERMARKET", width));
-            sb.AppendLine(CenterText("160 MAIN REEF ROAD, JHB", width));
-            sb.AppendLine(CenterText("TEL: (011) 830-2722", width));
+            sb.AppendLine(CenterText("BLUE_KNIGHT SUPERMARKET", width));
+            sb.AppendLine(CenterText("POINT OF SALE & RETAIL", width));
+            sb.AppendLine(CenterText("CAPE TOWN / JHB", width));
             sb.AppendLine(CenterText("VAT NO: 4710192837", width));
             sb.AppendLine("".PadRight(width, '='));
 
             sb.AppendLine($"Date:    {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             sb.AppendLine($"Invoice: {invoiceNo}");
             sb.AppendLine($"Cashier: {cashierName} (M1)");
-            sb.AppendLine($"Account: CASH (Cash Sale)");
+            sb.AppendLine($"Account: {accountName}");
             sb.AppendLine("".PadRight(width, '-'));
 
             sb.AppendLine("ITEM                 QTY   PRICE     TOTAL");
@@ -70,20 +72,22 @@ namespace FamilySupermarketPOS.Services
             sb.AppendLine("".PadRight(width, '='));
 
             sb.AppendLine(CenterText("THANK YOU FOR SHOPPING WITH US", width));
-            sb.AppendLine(CenterText("PLEASE RETAIN SLIP FOR RETURNS", width));
-            sb.AppendLine(CenterText("*** REPRINT / AUDIT COPY ***", width));
+            sb.AppendLine(CenterText("BLUE_KNIGHT RETAIL SYSTEMS", width));
             sb.AppendLine("".PadRight(width, '='));
 
-            return sb.ToString();
+            LastReceiptText = sb.ToString();
+            LastInvoiceNumber = invoiceNo;
+
+            return LastReceiptText;
         }
 
         public static void SaveReceiptToFile(string invoiceNo, string receiptText)
         {
             try
             {
-                string receiptsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Receipts");
-                Directory.CreateDirectory(receiptsFolder);
-                string filePath = Path.Combine(receiptsFolder, $"{invoiceNo}.txt");
+                string folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Receipts");
+                Directory.CreateDirectory(folder);
+                string filePath = Path.Combine(folder, $"{invoiceNo}.txt");
                 File.WriteAllText(filePath, receiptText);
             }
             catch

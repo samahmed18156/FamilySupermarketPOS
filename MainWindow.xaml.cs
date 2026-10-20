@@ -20,6 +20,8 @@ namespace FamilySupermarketPOS
             InitializeComponent();
             DataGridCart.ItemsSource = Cart;
             TxtCurrentDate.Text = DateTime.Now.ToString("dd MMMM yyyy");
+            TxtStoreTitle.Text = ConfigService.Current.StoreName;
+            TxtCashier.Text = $"Cashier: {ConfigService.Current.CashierName}  |  Station: {ConfigService.Current.StationId}  |  Mode: Retail POS";
 
             Loaded += async (s, e) =>
             {
@@ -28,8 +30,8 @@ namespace FamilySupermarketPOS
                 if (!dbConnected)
                 {
                     System.Windows.MessageBox.Show(
-                        "Notice: Could not connect to local MySQL database.\nOffline mode active: Using demo stock catalog.\n(All features, F3 lookup, F12 tender & receipts are working!)",
-                        "Family Supermarket POS");
+                        "Notice: Could not connect to local MySQL database.\nOffline mode active: Using demo stock catalog.\n\nTip: Go to Utility -> MySQL Database Configuration to set your MySQL password.",
+                        "Blue_Knight POS");
                 }
             };
 
@@ -46,6 +48,16 @@ namespace FamilySupermarketPOS
             else if (e.Key == Key.F3)
             {
                 OpenSearch();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F10)
+            {
+                OpenReprint();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.A && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                OpenDebtorLookup();
                 e.Handled = true;
             }
             else if (e.Key == Key.Delete && DataGridCart.SelectedItem is CartItem selected)
@@ -88,7 +100,6 @@ namespace FamilySupermarketPOS
 
         private void AddItemToCart(Product product, double qty)
         {
-            // Check if item is already in cart, if so increase quantity
             var existing = Cart.FirstOrDefault(x => x.Code.Equals(product.Code, StringComparison.OrdinalIgnoreCase));
             if (existing != null)
             {
@@ -96,7 +107,6 @@ namespace FamilySupermarketPOS
                 existing.TotalIncl = Math.Round(existing.Qty * product.SellingPriceIncl, 2);
                 existing.PriceExcl = Math.Round(existing.TotalIncl / (1 + VatRate), 2);
                 
-                // Refresh grid binding
                 int idx = Cart.IndexOf(existing);
                 Cart[idx] = existing;
             }
@@ -139,6 +149,7 @@ namespace FamilySupermarketPOS
             }
 
             double grandTotal = Cart.Sum(x => x.TotalIncl);
+            string accName = $"{TxtAccountNum.Text.Trim()} ({TxtAccountName.Text.Trim()})";
 
             var payWin = new PaymentWindow(grandTotal) { Owner = this };
             if (payWin.ShowDialog() == true && payWin.Result.Success)
@@ -151,9 +162,9 @@ namespace FamilySupermarketPOS
                     payWin.Result.AmountTendered,
                     payWin.Result.Change,
                     payWin.Result.PaymentMethod,
-                    "ZAMAN MP");
+                    ConfigService.Current.CashierName,
+                    accName);
 
-                // Save receipt text slip and log to database
                 HardwareService.SaveReceiptToFile(invoiceNo, slip);
                 await DatabaseService.RecordSaleTransactionAsync(invoiceNo, Cart.ToList(), payWin.Result.PaymentMethod);
 
@@ -181,21 +192,73 @@ namespace FamilySupermarketPOS
             TxtBarcode.Focus();
         }
 
+        private void OpenReprint()
+        {
+            var reprintWin = new ReceiptPreviewWindow { Owner = this };
+            reprintWin.ShowDialog();
+        }
+
+        private void OpenDebtorLookup()
+        {
+            var debtorWin = new DebtorLookupWindow { Owner = this };
+            if (debtorWin.ShowDialog() == true && debtorWin.SelectedDebtor != null)
+            {
+                var d = debtorWin.SelectedDebtor;
+                TxtAccountNum.Text = d.AccountNumber;
+                TxtAccountName.Text = d.Name;
+                TxtCreditLimit.Text = $"Credit Limit: {d.DisplayLimit}";
+                TxtOsBal.Text = $"OS Balance: {d.DisplayBalance}";
+            }
+            TxtBarcode.Focus();
+        }
+
         private void BtnCompleteSale_Click(object sender, RoutedEventArgs e) => CompleteSale();
 
         private void BtnSearch_Click(object sender, RoutedEventArgs e) => OpenSearch();
+
+        private void BtnAccountLookup_Click(object sender, RoutedEventArgs e) => OpenDebtorLookup();
 
         private void MenuExit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 
         private void MenuSwitchUser_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Cashier login & switch user dialog.", "Switch User");
+            System.Windows.MessageBox.Show("Switch Cashier login dialog.", "Switch Cashier");
         }
 
         private void MenuStockMaint_Click(object sender, RoutedEventArgs e)
         {
             var maintWin = new StockMaintenanceWindow { Owner = this };
             maintWin.ShowDialog();
+        }
+
+        private void MenuDebtors_Click(object sender, RoutedEventArgs e) => OpenDebtorLookup();
+
+        private void MenuCashUp_Click(object sender, RoutedEventArgs e)
+        {
+            var cashUpWin = new CashUpWindow { Owner = this };
+            cashUpWin.ShowDialog();
+        }
+
+        private void MenuDayEnd_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show(
+                "Day End Process will:\n1. Lock all current day transactions\n2. Consolidate cash, card, and debtor totals\n3. Roll stock on hand forward for tomorrow.\n\nPlease complete Cash Up first.",
+                "Day End Process");
+        }
+
+        private void MenuDatabaseConfig_Click(object sender, RoutedEventArgs e)
+        {
+            var dbWin = new DatabaseConfigWindow { Owner = this };
+            dbWin.ShowDialog();
+        }
+
+        private void MenuReprint_Click(object sender, RoutedEventArgs e) => OpenReprint();
+
+        private void MenuAbout_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show(
+                "Blue_Knight POS - Retail Terminal Edition\nVersion 1.0 (Windows 10/11 64-bit)\nBuilt with .NET 8 & WPF-UI Fluent Design\n\nOptimized for Family Supermarket / Retail Store Operations",
+                "About Blue_Knight POS");
         }
     }
 }
